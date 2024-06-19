@@ -19,7 +19,7 @@ Demo: https://java-project-99-by3y.onrender.com
 ```bash
 make run
 ```
-Open in browser: http://localhost:7070
+Open in browser: http://localhost:8080
 
 ### Technologies and frameworks used in project:
 - Language Java

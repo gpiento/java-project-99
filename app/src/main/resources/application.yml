@@ -1,5 +1,7 @@
 ---
 spring:
+  profiles:
+    active: development
   jpa:
     show-sql: true
     hibernate:

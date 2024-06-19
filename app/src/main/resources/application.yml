@@ -1,7 +1,4 @@
----
 spring:
-  profiles:
-    active: development
   jpa:
     show-sql: true
     hibernate:
@@ -14,7 +11,35 @@ logging:
     root: ERROR
     org:
       springframework:
-        web: DEBUG
+        # web: DEBUG
         security: DEBUG
 server:
   address: 0.0.0.0
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://qjADkhhCSu7WiRwmaoYauuhU6tDABhjp@dpg-colafju3e1ms738a3u10-a.ohio-postgres.render.com/render_db1
+    username: render_db1_user
+    password: qjADkhhCSu7WiRwmaoYauuhU6tDABhjp
+    driver-class-name: org.postgresql.Driver
+server:
+  port: 10000
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:mem:project
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+      path: /h2-console

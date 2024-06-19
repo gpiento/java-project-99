@@ -70,6 +70,13 @@ test {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
 
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes 'Main-Class': 'hexlet.code.AppApplication'
+    }
+}
+
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
     reports {

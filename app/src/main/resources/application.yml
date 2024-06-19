@@ -1,0 +1,16 @@
+---
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    root: ERROR
+    org:
+      springframework:
+        web: DEBUG
+        security: DEBUG

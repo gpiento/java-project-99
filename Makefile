@@ -17,7 +17,7 @@ run-dist: install
 	@./build/install/app/bin/app
 
 run: build
-	@java -jar ./build/libs/app-1.0-SNAPSHOT-all.jar
+	@java -jar ./app/build/libs/app-0.0.1-SNAPSHOT-all.jar
 
 test:
 	./gradlew test

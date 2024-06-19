@@ -29,7 +29,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build with Gradle
-        working-directory: app
         run: ./gradlew build
 
       - name: Check for build errors

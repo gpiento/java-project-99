@@ -14,3 +14,5 @@ logging:
       springframework:
         web: DEBUG
         security: DEBUG
+server:
+  address: 0.0.0.0

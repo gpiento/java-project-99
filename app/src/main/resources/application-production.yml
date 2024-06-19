@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://qjADkhhCSu7WiRwmaoYauuhU6tDABhjp@dpg-colafju3e1ms738a3u10-a.ohio-postgres.render.com/render_db1
+    username: render_db1_user
+    password: qjADkhhCSu7WiRwmaoYauuhU6tDABhjp
+    driver-class-name: org.postgresql.Driver
+server:
+  port: 10000

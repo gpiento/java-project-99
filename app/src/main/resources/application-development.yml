@@ -3,9 +3,7 @@ spring:
     username: sa
     password:
     url: jdbc:h2:mem:project
-    driver-class-name: org.h2.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+#    driver-class-name: org.h2.Driver
   h2:
     console:
       enabled: true

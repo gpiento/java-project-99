@@ -4,6 +4,7 @@
  * This generated file contains a sample Java application project to get you started.
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.8/userguide/building_java_projects.html in the Gradle documentation.
  */
+import com.github.jengelman.gradle.plugins.shadow.transformers.*
 
 plugins {
     id 'application'
@@ -71,9 +72,15 @@ test {
 }
 
 shadowJar {
+    configurations = [project.configurations.productionRuntimeClasspath]
+    zip64 true
     mergeServiceFiles()
-    manifest {
-        attributes 'Main-Class': 'hexlet.code.AppApplication'
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.tooling'
+    transform(PropertiesFileTransformer) {
+        paths = ['META-INF/spring.factories' ]
+        mergeStrategy = "append"
     }
 }
 

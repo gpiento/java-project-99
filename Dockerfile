@@ -1,7 +1,8 @@
 FROM openjdk:21-slim
 COPY . .
 WORKDIR /
-RUN ./gradlew --no-daemon shadowJar
+RUN ./gradlew --no-daemon build
+#RUN ./gradlew --no-daemon shadowJar
 #RUN ./gradlew --no-daemon installDist
 ENV JAVA_OPTS "-Xmx512M -Xms512M"
 EXPOSE 10000

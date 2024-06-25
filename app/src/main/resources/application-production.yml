@@ -4,5 +4,7 @@ spring:
     username: render_db1_user
     password: qjADkhhCSu7WiRwmaoYauuhU6tDABhjp
     driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
   port: 10000

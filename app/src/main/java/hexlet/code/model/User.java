@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +42,6 @@ public class User implements BaseEntity, UserDetails {
 
     @Column(unique = true)
     @Email
-    @NotNull
     private String email;
 
     private String passwordDigest;

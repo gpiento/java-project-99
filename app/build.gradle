@@ -4,8 +4,6 @@
  * This generated file contains a sample Java application project to get you started.
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.8/userguide/building_java_projects.html in the Gradle documentation.
  */
-import com.github.jengelman.gradle.plugins.shadow.transformers.*
-
 plugins {
     id 'application'
     id 'checkstyle'
@@ -69,7 +67,8 @@ dependencies {
     testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
 //    testImplementation libs.junit.jupiter
 
-    implementation 'com.google.guava:guava:33.0.0-jre'
+//    implementation 'com.google.guava:guava:33.0.0-jre'
+//    implementation 'org.slf4j:slf4j-api:1.7.32'
 }
 
 java {
@@ -84,19 +83,6 @@ tasks.named('test') {
 
 test {
     finalizedBy jacocoTestReport // report is always generated after tests run
-}
-
-shadowJar {
-    configurations = [project.configurations.productionRuntimeClasspath]
-    zip64 true
-    mergeServiceFiles()
-    append 'META-INF/spring.handlers'
-    append 'META-INF/spring.schemas'
-    append 'META-INF/spring.tooling'
-    transform(PropertiesFileTransformer) {
-        paths = ['META-INF/spring.factories' ]
-        mergeStrategy = "append"
-    }
 }
 
 jacocoTestReport {

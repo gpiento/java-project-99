@@ -1,6 +1,5 @@
 package hexlet.code.component;
 
-import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
 import hexlet.code.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
@@ -15,9 +14,6 @@ public class DataInitializer implements ApplicationRunner {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Override
     public void run(ApplicationArguments args) {

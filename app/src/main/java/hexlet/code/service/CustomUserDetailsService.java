@@ -28,7 +28,8 @@ public class CustomUserDetailsService implements UserDetailsManager {
     @Override
     public void createUser(UserDetails userData) {
 
-        User user = new User();
+        User user = userRepository.findByEmail(userData.getUsername())
+                .orElse(new User());
         user.setEmail(userData.getUsername());
         String hashedPassword = passwordEncoder.encode(userData.getPassword());
         user.setPasswordDigest(hashedPassword);

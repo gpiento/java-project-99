@@ -1,9 +1,8 @@
 package hexlet.code.component;
 
-import hexlet.code.dto.users.UserCreateDTO;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
-import hexlet.code.repository.UserRepository;
+import hexlet.code.service.CustomUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -15,19 +14,16 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements ApplicationRunner {
 
     @Autowired
-    private UserRepository userRepository;
+    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private UserMapper userMapper;
 
     @Override
-    public void run(final ApplicationArguments args) throws Exception {
-        UserCreateDTO userData = new UserCreateDTO();
+    public void run(ApplicationArguments args) {
+        User userData = new User();
         userData.setEmail("hexlet@example.com");
-        userData.setPassword("qwerty");
-        userData.setFirstName("John");
-        userData.setLastName("Doe");
-        User user = userMapper.map(userData);
-        userRepository.save(user);
+        userData.setPasswordDigest("qwerty");
+        customUserDetailsService.createUser(userData);
     }
 }

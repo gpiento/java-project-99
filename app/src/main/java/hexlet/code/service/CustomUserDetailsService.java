@@ -19,14 +19,14 @@ public class CustomUserDetailsService implements UserDetailsManager {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
-    public void createUser(final UserDetails userData) {
+    public void createUser(UserDetails userData) {
 
         User user = new User();
         user.setEmail(userData.getUsername());
@@ -36,25 +36,29 @@ public class CustomUserDetailsService implements UserDetailsManager {
     }
 
     @Override
-    public void updateUser(final UserDetails user) {
+    public void updateUser(UserDetails user) {
+
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
     }
 
     @Override
-    public void deleteUser(final String username) {
+    public void deleteUser(String username) {
+
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
     }
 
     @Override
-    public void changePassword(final String oldPassword, final String newPassword) {
+    public void changePassword(String oldPassword, final String newPassword) {
+
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'changePassword'");
     }
 
     @Override
-    public boolean userExists(final String username) {
+    public boolean userExists(String username) {
+
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'userExists'");
     }

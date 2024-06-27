@@ -14,11 +14,13 @@ public class UserUtils {
     private UserRepository userRepository;
 
     public User getCurrentUser() {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
         String email = authentication.getName();
+
         return userRepository.findByEmail(email).get();
     }
 }

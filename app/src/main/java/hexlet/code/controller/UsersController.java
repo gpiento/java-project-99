@@ -3,6 +3,10 @@ package hexlet.code.controller;
 import hexlet.code.dto.users.UserCreateDTO;
 import hexlet.code.dto.users.UserDTO;
 import hexlet.code.dto.users.UserUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.mapper.UserMapper;
+import hexlet.code.model.User;
+import hexlet.code.repository.UserRepository;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,7 +29,11 @@ import java.util.List;
 public class UsersController {
 
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private UserService userService;
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
@@ -41,21 +48,23 @@ public class UsersController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO show(@PathVariable final Long id) {
+    public UserDTO show(@PathVariable Long id) {
 
-        return userService.getUserById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
+        return userMapper.map(user);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO create(@Valid @RequestBody final UserCreateDTO userCreateDTO) {
+    public UserDTO create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
 
         return userService.create(userCreateDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO update(@PathVariable final Long id, @RequestBody final UserUpdateDTO userUpdateDTO) {
+    public UserDTO update(@PathVariable Long id, @RequestBody UserUpdateDTO userUpdateDTO) {
 
         return userService.update(id, userUpdateDTO);
     }

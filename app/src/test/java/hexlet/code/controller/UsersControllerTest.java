@@ -1,8 +1,7 @@
 package hexlet.code.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.dto.users.UserDTO;
-import hexlet.code.dto.users.UserUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
@@ -10,9 +9,9 @@ import hexlet.code.service.UserService;
 import hexlet.code.util.ModelGenerator;
 import net.datafaker.Faker;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,14 +26,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Optional;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.put;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -64,6 +66,7 @@ public class UsersControllerTest {
 
     @Autowired
     private ModelGenerator modelGenerator;
+
     @Autowired
     private UserService userService;
 
@@ -72,47 +75,55 @@ public class UsersControllerTest {
 
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
-//                .apply(springSecurity())
+                .apply(springSecurity())
                 .build();
         token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
         testUser = Instancio.of(modelGenerator.getUserModel()).create();
         userRepository.save(testUser);
     }
 
+    @AfterEach
+    public void tearDown() {
+        userRepository.deleteAll();
+    }
+
     @Test
     public void testIndex() throws Exception {
 
-        mockMvc.perform(get("/api/users").with(jwt()))
+        mockMvc.perform(get("/api/users").with(token))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testCreate() throws Exception {
 
-        UserDTO dto = userMapper.map(testUser);
+        User userNew = Instancio.of(modelGenerator.getUserModel()).create();
 
-        MockHttpServletRequestBuilder request = post("/api/posts")
+        MockHttpServletRequestBuilder request = post("/api/users")
                 .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto));
+                .content(objectMapper.writeValueAsString(userNew));
 
         mockMvc.perform(request)
                 .andExpect(status().isCreated());
 
-        User user = userRepository.findByEmail(dto.getEmail()).get();
+        Optional<User> userOptional = userRepository.findByEmail(userNew.getEmail());
+        User userFromDB = userOptional
+                .orElseThrow(() -> new ResourceNotFoundException("User " + userNew.getEmail() + " not found"));
 
-        assertNotNull(user);
-        assertThat(user.getEmail()).isEqualTo(testUser.getEmail());
-        assertThat(user.getFirstName()).isEqualTo(testUser.getFirstName());
-        assertThat(user.getLastName()).isEqualTo(testUser.getLastName());
-        assertThat(user.getCreatedAt()).isNotNull();
+        assertNotNull(userFromDB);
+        assertThat(userFromDB.getEmail()).isEqualTo(userNew.getEmail());
+        assertThat(userFromDB.getFirstName()).isEqualTo(userNew.getFirstName());
+        assertThat(userFromDB.getLastName()).isEqualTo(userNew.getLastName());
+        assertThat(userFromDB.getCreatedAt()).isNotNull();
     }
 
     @Test
     public void testShow() throws Exception {
 
-        MockHttpServletRequestBuilder request = get("/api/posts"
-                + testUser.getId()).with(token);
+        MockHttpServletRequestBuilder request = get("/api/users/{id}",
+                testUser.getId())
+                .with(token);
         MvcResult result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
@@ -126,27 +137,21 @@ public class UsersControllerTest {
     }
 
     @Test
-    void update() throws Exception {
-        userRepository.save(testUser);
-        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
-        userUpdateDTO.setFirstName(JsonNullable.of(faker.name().firstName()));
-        userUpdateDTO.setLastName(JsonNullable.of(faker.name().lastName()));
-        userUpdateDTO.setEmail(JsonNullable.of(faker.internet().emailAddress()));
-        userUpdateDTO.setPassword(JsonNullable.of(faker.internet().password(3, 30)));
+    void testUpdate() throws Exception {
 
-        MockHttpServletRequestBuilder request = put("/api/users/{id}", testUser.getId())
+        HashMap<String, String> data = new HashMap<>();
+        data.put("firstName", "Mike");
+
+        MockHttpServletRequestBuilder request = put("/api/users/" + testUser.getId())
+                .with(token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userUpdateDTO));
+                .content(objectMapper.writeValueAsString(data));
 
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
-        User userModified = userRepository.findById(testUser.getId()).get();
-
-        assertThat(userModified.getFirstName()).isEqualTo(userUpdateDTO.getFirstName());
-        assertThat(userModified.getLastName()).isEqualTo(userUpdateDTO.getLastName());
-        assertThat(userModified.getEmail()).isEqualTo(userUpdateDTO.getEmail());
-        assertThat(userModified.getPasswordDigest()).isEqualTo(userUpdateDTO.getPassword());
+        testUser = userRepository.findById(testUser.getId()).get();
+        assertThat(testUser.getFirstName()).isEqualTo("Mike");
     }
 
     @Test

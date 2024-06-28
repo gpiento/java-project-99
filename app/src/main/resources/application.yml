@@ -10,7 +10,7 @@ spring:
       enabled: always
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org:
       springframework:
         # web: DEBUG

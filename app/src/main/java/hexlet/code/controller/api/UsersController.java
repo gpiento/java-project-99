@@ -1,11 +1,9 @@
-package hexlet.code.controller;
+package hexlet.code.controller.api;
 
 import hexlet.code.dto.users.UserCreateDTO;
 import hexlet.code.dto.users.UserDTO;
 import hexlet.code.dto.users.UserUpdateDTO;
-import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.UserMapper;
-import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
@@ -50,9 +48,7 @@ public class UsersController {
     @ResponseStatus(HttpStatus.OK)
     public UserDTO show(@PathVariable Long id) {
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
-        return userMapper.map(user);
+        return userService.getUserById(id);
     }
 
     @PostMapping("")

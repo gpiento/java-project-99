@@ -1,7 +1,7 @@
 package hexlet.code.dto.users;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,12 +10,15 @@ import lombok.Setter;
 public class UserCreateDTO {
 
     @Email
+    @NotNull
     private String email;
 
+    @NotNull
     private String firstName;
 
+    @NotNull
     private String lastName;
 
-    @Size(min = 3)
-    private String password;
+    @NotNull
+    private String passwordDigest;
 }

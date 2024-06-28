@@ -21,7 +21,7 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public UserDTO getUserById(final Long id) {
+    public UserDTO getUserById(Long id) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
@@ -29,7 +29,7 @@ public class UserService {
         return userMapper.map(user);
     }
 
-    public UserDTO create(final UserCreateDTO userCreateDTO) {
+    public UserDTO create(UserCreateDTO userCreateDTO) {
 
         User user = userMapper.map(userCreateDTO);
         userRepository.save(user);
@@ -46,7 +46,7 @@ public class UserService {
                 .toList();
     }
 
-    public UserDTO update(final Long id, final UserUpdateDTO userUpdateDTO) {
+    public UserDTO update(Long id, UserUpdateDTO userUpdateDTO) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
@@ -56,7 +56,7 @@ public class UserService {
         return userMapper.map(user);
     }
 
-    public void delete(final Long id) {
+    public void delete(Long id) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));

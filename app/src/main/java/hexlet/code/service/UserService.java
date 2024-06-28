@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -43,6 +44,10 @@ public class UserService {
 
     public UserDTO create(UserCreateDTO userCreateDTO) {
 
+        Optional<User> userOptional = userRepository.findByEmail(userCreateDTO.getEmail());
+        if (userOptional.isPresent()) {
+            throw new ResourceNotFoundException("User with email " + userCreateDTO.getEmail() + " already exists");
+        }
         User user = userMapper.map(userCreateDTO);
         user = userRepository.save(user);
 

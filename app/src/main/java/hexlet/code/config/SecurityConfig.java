@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/index.html").permitAll()
                         .requestMatchers("/assets/*").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
+                        .requestMatchers("/h2-console/*").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

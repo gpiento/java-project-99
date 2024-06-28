@@ -92,9 +92,10 @@ public class UsersControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testUser.getId()))
+                .andExpect(jsonPath("$.email").value(testUser.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(testUser.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(testUser.getLastName()))
-                .andExpect(jsonPath("$.email").value(testUser.getEmail()));
+                .andExpect(jsonPath("$.createdAt").exists());
     }
 
     @Test
@@ -112,9 +113,10 @@ public class UsersControllerTest {
                         .with(token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testUser.getId()))
+                .andExpect(jsonPath("$.email").value(testUser.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(testUser.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(testUser.getLastName()))
-                .andExpect(jsonPath("$.email").value(testUser.getEmail()));
+                .andExpect(jsonPath("$.createdAt").exists());
     }
 
     @Test

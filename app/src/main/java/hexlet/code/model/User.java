@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -39,26 +40,33 @@ public class User implements BaseEntity, UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(unique = true, nullable = false, length = 200)
     @Email
+    @NotBlank
+    @Column(name = "email", unique = true)
     private String email;
 
     @Size(min = 3)
     @JsonIgnore
+    @Column(name = "password")
     private String passwordDigest;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @CreatedDate
+    @Column(name = "created_at", updatable = false)
     private LocalDate createdAt;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @LastModifiedDate
+    @Column(name = "updated_at")
     private LocalDate updatedAt;
 
     @Override

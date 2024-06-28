@@ -77,9 +77,9 @@ public class UsersControllerTest {
                         .with(token))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.email").value(testUser.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(testUser.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(testUser.getLastName()))
-                .andExpect(jsonPath("$.email").value(testUser.getEmail()));
+                .andExpect(jsonPath("$.lastName").value(testUser.getLastName()));
     }
 
     @Test

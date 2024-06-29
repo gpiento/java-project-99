@@ -4,5 +4,10 @@ spring:
     username: render_db1_user
     password: qjADkhhCSu7WiRwmaoYauuhU6tDABhjp
     driver-class-name: org.postgresql.Driver
-server:
-  port: 10000
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        # web: DEBUG
+        security: INFO

@@ -15,6 +15,3 @@ logging:
       springframework:
         # web: DEBUG
         security: DEBUG
-
-server:
-  port: 8080

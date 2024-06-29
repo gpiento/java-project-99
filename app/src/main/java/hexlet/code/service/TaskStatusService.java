@@ -42,8 +42,8 @@ public class TaskStatusService {
 
         Optional<TaskStatus> taskStatusOptional = taskStatusRepository.findBySlug(taskStatusCreateDTO.getSlug());
         if (taskStatusOptional.isPresent()) {
-            throw new ResourceNotFoundException("Task status with slug "
-                    + taskStatusCreateDTO.getSlug() + " already exists");
+            throw new ResourceNotFoundException(
+                    "Task status with slug '" + taskStatusCreateDTO.getSlug() + "' already exists");
         }
 
         TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);

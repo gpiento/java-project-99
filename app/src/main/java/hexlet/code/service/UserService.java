@@ -8,7 +8,6 @@ import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,20 +21,16 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAll() {
 
         List<User> users = userRepository.findAll();
-
         return users.stream()
                 .map(userMapper::map)
                 .toList();
     }
 
     public UserDTO getUserById(Long id) {
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
 
@@ -43,7 +38,6 @@ public class UserService {
     }
 
     public UserDTO create(UserCreateDTO userCreateDTO) {
-
         Optional<User> userOptional = userRepository.findByEmail(userCreateDTO.getEmail());
         if (userOptional.isPresent()) {
             throw new ResourceNotFoundException("User with email " + userCreateDTO.getEmail() + " already exists");
@@ -55,7 +49,6 @@ public class UserService {
     }
 
     public UserDTO update(Long id, UserUpdateDTO userUpdateDTO) {
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
         userMapper.update(userUpdateDTO, user);
@@ -65,7 +58,6 @@ public class UserService {
     }
 
     public void delete(Long id) {
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
         userRepository.deleteById(user.getId());

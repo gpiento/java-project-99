@@ -30,7 +30,6 @@ public class TaskStatusController {
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TaskStatusDTO>> index() {
-
         List<TaskStatusDTO> taskStatusDTO = taskStatusService.getAll();
 
         return ResponseEntity.ok()
@@ -41,28 +40,24 @@ public class TaskStatusController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TaskStatusDTO show(@PathVariable Long id) {
-
         return taskStatusService.getTaskStatusById(id);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public TaskStatusDTO create(@Valid @RequestBody TaskStatusCreateDTO taskStatusCreateDTO) {
-
         return taskStatusService.create(taskStatusCreateDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TaskStatusDTO update(@PathVariable Long id, @Valid @RequestBody TaskStatusUpdateDTO taskStatusUpdateDTO) {
-
         return taskStatusService.update(id, taskStatusUpdateDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
-
         taskStatusService.delete(id);
     }
 }

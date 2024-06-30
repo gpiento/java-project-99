@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-colafju3e1ms738a3u10-a.ohio-postgres.render.com/render_db1
-    username: render_db1_user
-    password: qjADkhhCSu7WiRwmaoYauuhU6tDABhjp
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 logging:
   level:

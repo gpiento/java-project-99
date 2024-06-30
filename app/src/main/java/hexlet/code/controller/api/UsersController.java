@@ -3,8 +3,6 @@ package hexlet.code.controller.api;
 import hexlet.code.dto.users.UserCreateDTO;
 import hexlet.code.dto.users.UserDTO;
 import hexlet.code.dto.users.UserUpdateDTO;
-import hexlet.code.mapper.UserMapper;
-import hexlet.code.repository.UserRepository;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +25,11 @@ import java.util.List;
 public class UsersController {
 
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private UserService userService;
-    @Autowired
-    private UserMapper userMapper;
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<UserDTO>> index() {
-
         List<UserDTO> usersDTO = userService.getAll();
 
         return ResponseEntity.ok()
@@ -47,28 +40,24 @@ public class UsersController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO show(@PathVariable Long id) {
-
         return userService.getUserById(id);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-
         return userService.create(userCreateDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-
         return userService.update(id, userUpdateDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
-
         userService.delete(id);
     }
 }

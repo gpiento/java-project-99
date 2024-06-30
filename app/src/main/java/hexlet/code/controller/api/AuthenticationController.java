@@ -24,7 +24,6 @@ public class AuthenticationController {
     public String create(@RequestBody AuthRequest authRequest) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 authRequest.getUsername(), authRequest.getPassword());
-
         authenticationManager.authenticate(authentication);
 
         return jwtUtils.generateToken(authRequest.getUsername());

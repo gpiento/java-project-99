@@ -22,7 +22,6 @@ public class TaskStatusService {
     private TaskStatusMapper taskStatusMapper;
 
     public TaskStatusDTO getTaskStatusById(Long id) {
-
         TaskStatus taskStatus = taskStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status " + id + " not found"));
 
@@ -30,7 +29,6 @@ public class TaskStatusService {
     }
 
     public List<TaskStatusDTO> getAll() {
-
         List<TaskStatus> taskStatusList = taskStatusRepository.findAll();
 
         return taskStatusList.stream()
@@ -39,13 +37,11 @@ public class TaskStatusService {
     }
 
     public TaskStatusDTO create(TaskStatusCreateDTO taskStatusCreateDTO) {
-
         Optional<TaskStatus> taskStatusOptional = taskStatusRepository.findBySlug(taskStatusCreateDTO.getSlug());
         if (taskStatusOptional.isPresent()) {
             throw new ResourceNotFoundException(
                     "Task status with slug '" + taskStatusCreateDTO.getSlug() + "' already exists");
         }
-
         TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
         taskStatus = taskStatusRepository.save(taskStatus);
 
@@ -53,7 +49,6 @@ public class TaskStatusService {
     }
 
     public TaskStatusDTO update(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
-
         TaskStatus taskStatus = taskStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status " + id + " not found"));
         taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
@@ -63,7 +58,6 @@ public class TaskStatusService {
     }
 
     public void delete(Long id) {
-
         TaskStatus taskStatus = taskStatusRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task status " + id + " not found"));
         taskStatusRepository.delete(taskStatus);

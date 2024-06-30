@@ -52,7 +52,6 @@ public class UsersControllerTest {
 
     @BeforeEach
     public void setUp() {
-
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
 //                .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
 //                .apply(springSecurity())
@@ -63,14 +62,12 @@ public class UsersControllerTest {
 
     @Test
     public void testIndex() throws Exception {
-
         mockMvc.perform(get("/api/users").with(token))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testCreate() throws Exception {
-
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testUser))
@@ -85,9 +82,7 @@ public class UsersControllerTest {
 
     @Test
     public void testShow() throws Exception {
-
         testUser = userRepository.save(testUser);
-
         mockMvc.perform(get("/api/users/{id}", testUser.getId()).with(token))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -100,13 +95,10 @@ public class UsersControllerTest {
 
     @Test
     void testUpdate() throws Exception {
-
         testUser = userRepository.save(testUser);
-
         testUser.setFirstName(faker.name().firstName());
         testUser.setLastName(faker.name().lastName());
         testUser.setEmail(faker.internet().emailAddress());
-
         mockMvc.perform(put("/api/users/{id}", testUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testUser))
@@ -121,12 +113,9 @@ public class UsersControllerTest {
 
     @Test
     public void destroy() throws Exception {
-
         testUser = userRepository.save(testUser);
-
         mockMvc.perform(delete("/api/users/{id}", testUser.getId()).with(token))
                 .andExpect(status().isNoContent());
-
         assertFalse(userRepository.existsById(testUser.getId()));
     }
 }

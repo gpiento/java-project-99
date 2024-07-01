@@ -31,8 +31,8 @@ public class ModelGenerator {
                 .toModel();
 
         taskStatusModel = Instancio.of(TaskStatus.class)
-                .supply(Select.field("name"), () -> faker.job().position())
-                .supply(Select.field("slug"), () -> faker.job().position().toLowerCase())
+                .supply(Select.field("name"), () -> faker.name().firstName())
+                .supply(Select.field("slug"), () -> faker.internet().domainWord().toLowerCase().replace("-", "_"))
                 .toModel();
     }
 }

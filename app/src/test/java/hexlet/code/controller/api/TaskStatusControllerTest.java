@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.util.ModelGenerator;
+import jakarta.transaction.Transactional;
 import net.datafaker.Faker;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
+@ActiveProfiles("test")
 class TaskStatusControllerTest {
 
     private TaskStatus testTaskStatus;
@@ -66,6 +70,7 @@ class TaskStatusControllerTest {
                 .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
                 .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
                 .andExpect(jsonPath("$.createdAt").exists());
+        taskStatusRepository.delete(testTaskStatus);
     }
 
     @Test
@@ -78,13 +83,14 @@ class TaskStatusControllerTest {
                 .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
                 .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
                 .andExpect(jsonPath("$.createdAt").exists());
+        taskStatusRepository.delete(testTaskStatus);
     }
 
     @Test
     void testUpdate() throws Exception {
         testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        testTaskStatus.setName(faker.name().name());
-        testTaskStatus.setSlug(faker.name().name().toLowerCase().replace(" ", "-"));
+        testTaskStatus.setName(faker.name().firstName());
+        testTaskStatus.setSlug(faker.internet().domainWord().toLowerCase().replace("-", "_"));
         mockMvc.perform(put("/api/task_statuses/{id}", testTaskStatus.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testTaskStatus))
@@ -94,6 +100,7 @@ class TaskStatusControllerTest {
                 .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
                 .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
                 .andExpect(jsonPath("$.createdAt").exists());
+        taskStatusRepository.delete(testTaskStatus);
     }
 
     @Test

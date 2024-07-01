@@ -10,7 +10,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,12 +46,11 @@ public class Task implements BaseEntity {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "task_statuses_id")
-    @NotNull
+    @JoinColumn(name = "task_status_id", nullable = false)
     private TaskStatus taskStatus;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "assignee_id", nullable = false)
     private User assignee;
 
     @CreatedDate

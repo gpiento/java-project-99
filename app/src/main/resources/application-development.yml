@@ -10,7 +10,7 @@ spring:
       path: /h2-console
 logging:
   level:
-    root: INFO
+    root: ERROR
     org:
       springframework:
         # web: DEBUG

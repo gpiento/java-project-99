@@ -2,11 +2,7 @@ spring:
   profiles:
     active: development
   jpa:
-    #generate-ddl: true
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
+    generate-ddl: true
   output:
     ansi:
       enabled: always
@@ -23,3 +19,4 @@ server:
 rsa:
   private-key: classpath:certs/private.pem
   public-key: classpath:certs/public.pem
+

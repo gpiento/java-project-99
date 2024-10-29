@@ -13,8 +13,6 @@ import java.security.interfaces.RSAPublicKey;
 @Setter
 @Getter
 public class RsaKeyProperties {
-
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
 }
-

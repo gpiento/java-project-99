@@ -1,16 +1,32 @@
 package hexlet.code.dto.task;
 
-import hexlet.code.dto.taskstatus.TaskStatusDTO;
-import hexlet.code.dto.users.UserDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
 public class TaskDTO {
 
-    private String name;
-    private String description;
-    private TaskStatusDTO taskStatus;
-    private UserDTO assignee;
+    private Long id;
+
+    private Integer index;
+
+    private String title;
+
+    private String content;
+
+    private String status;
+
+    @JsonProperty("assignee_id")
+    private Long assignee;
+
+    private Set<Long> labelIds;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate createdAt;
 }

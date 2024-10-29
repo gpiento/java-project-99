@@ -1,8 +1,8 @@
 package hexlet.code.controller.api;
 
-import hexlet.code.dto.users.UserCreateDTO;
-import hexlet.code.dto.users.UserDTO;
-import hexlet.code.dto.users.UserUpdateDTO;
+import hexlet.code.dto.user.UserCreateDTO;
+import hexlet.code.dto.user.UserDTO;
+import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+// TODO add security
+//@Tag(name = "User Management", description = "Operations pertaining to users")
 public class UsersController {
 
     @Autowired
@@ -29,8 +31,8 @@ public class UsersController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<UserDTO>> index() {
-        List<UserDTO> usersDTO = userService.getAll();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> usersDTO = userService.getAllUsers();
 
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(usersDTO.size()))
@@ -39,25 +41,31 @@ public class UsersController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO show(@PathVariable Long id) {
+    public UserDTO getUserById(@PathVariable Long id) {
+
         return userService.getUserById(id);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        return userService.create(userCreateDTO);
+    public UserDTO createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+
+        return userService.createUser(userCreateDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDTO update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        return userService.update(id, userUpdateDTO);
+    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+
+        return userService.updateUser(id, userUpdateDTO);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
-        userService.delete(id);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+
+        userService.deleteUser(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

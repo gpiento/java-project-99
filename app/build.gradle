@@ -9,13 +9,13 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'io.freefair.lombok' version '8.6'
+    id 'io.freefair.lombok' version '8.10.2'
     id 'com.adarshr.test-logger' version '4.0.0'
     id 'com.github.ben-manes.versions' version '0.51.0'
 
-    id 'org.springframework.boot' version '3.3.0'
-    id 'io.spring.dependency-management' version '1.1.5'
-    id "io.sentry.jvm.gradle" version "4.9.0"
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+//    id 'io.sentry.jvm.gradle' version '4.11.0'
 }
 
 group = 'hexlet.code'
@@ -30,47 +30,73 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    springVersion = '6.1.13'
+    springBootVersion = '3.3.4'
+    springSecurityTestVersion = '6.3.3'
+    mapStructVersion = '1.6.2'
+    jacksonDatabindNullableVersion = '0.2.6'
+    h2Version = '2.3.232'
+    postgresqlVersion = '42.7.4'
+    lombokVersion = '1.18.34'
+    lombokMapstructBindingVersion = '0.2.0'
+    datafakerVersion = '2.4.0'
+    instancioVersion = '5.0.2'
+    sentryVersion = '7.13.0'
+    jsonUnitVersion = '3.4.1'
+    junitVersion = '5.11.2'
+    junitPlatformVersion = '1.11.1'
+}
+
 dependencies {
-    implementation 'org.springframework:spring-core:6.1.10'
+    implementation "org.springframework:spring-core:$springVersion"
 
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-devtools'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    testImplementation 'org.springframework.security:spring-security-test'
+    implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-devtools:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootVersion"
+    testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.mapstruct:mapstruct:$mapStructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
 
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion"
 
-    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+    runtimeOnly "com.h2database:h2:$h2Version"
+    runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
 
-    implementation 'com.h2database:h2:2.2.224'
-    implementation 'org.postgresql:postgresql:42.7.3'
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    implementation "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBindingVersion"
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    testCompileOnly 'org.projectlombok:lombok:1.18.32'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+    implementation "net.datafaker:datafaker:$datafakerVersion"
+    implementation "org.instancio:instancio-junit:$instancioVersion"
 
-    implementation 'net.datafaker:datafaker:2.2.2'
-    implementation 'org.instancio:instancio-junit:3.3.1'
+//    implementation "io.sentry:sentry-spring-boot-starter:$sentryVersion"
+//    implementation "io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion"
+//    implementation platform("io.sentry:sentry-bom:$sentryVersion") //import bom
+//    implementation('io.sentry:sentry') //no version specified
+//    implementation('io.sentry:sentry-logback') //no version specified
 
-    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:2.28.0'
 
-    testImplementation platform('org.junit:junit-bom:5.10.2')
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
-    testImplementation 'org.junit.platform:junit-platform-launcher:1.10.2'
-//    testImplementation libs.junit.jupiter
+    testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 
-//    implementation 'com.google.guava:guava:33.0.0-jre'
+//    testImplementation platform("org.junit:junit-bom:$junitVersion")
+//    testImplementation "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+//    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+//    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+//    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    //testImplementation libs.junit.jupiter
+    //implementation 'com.google.guava:guava:33.0.0-jre'
 //    implementation 'org.slf4j:slf4j-api:1.7.32'
 }
 
@@ -96,10 +122,10 @@ jacocoTestReport {
 }
 
 testlogger {
-    theme 'standard'
+    theme 'mocha'
     showExceptions true
     showStackTraces true
-    showFullStackTraces false
+    showFullStackTraces true
     showCauses true
     slowThreshold 2000
     showSummary true
@@ -132,13 +158,14 @@ dependencyUpdates {
     }
 }
 
-sentry {
-    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
-    // This enables source context, allowing you to see your source
-    // code as part of your stack traces in Sentry.
-    includeSourceContext = true
-
-    org = "petrov-company"
-    projectName = "java-spring-boot"
-    authToken = System.getenv("SENTRY_AUTH_TOKEN")
-}
+//sentry {
+//     Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+//     This enables source context, allowing you to see your source
+//     code as part of your stack traces in Sentry.
+//    includeSourceContext = true
+//
+//    org = "mycompany-k9"
+//    projectName = "java-spring-boot"
+//    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+//    authToken = "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"
+//}

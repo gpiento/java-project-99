@@ -10,4 +10,10 @@ import java.util.Optional;
 public interface TaskStatusRepository extends JpaRepository<TaskStatus, Long> {
 
     Optional<TaskStatus> findBySlug(String slug);
+
+    Optional<TaskStatus> findByName(String name);
+
+    Optional<TaskStatus> findByNameOrSlug(String name, String slug);
+
+    boolean existsBySlug(String slug);
 }

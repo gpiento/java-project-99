@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -20,6 +21,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableWebSecurity
+//@EnableMethodSecurity
+//@EnableSentry(dsn = "https://dcc135c20d90723b5db9ed3ede7eae02@o4507741689806848.ingest.de.sentry.io/4507741712416848")
 public class SecurityConfig {
 
     @Autowired
@@ -36,14 +39,15 @@ public class SecurityConfig {
                                                    HandlerMappingIntrospector introspector)
             throws Exception {
 
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/welcome").permitAll()
                         .requestMatchers("/index.html").permitAll()
-                        .requestMatchers("/assets/*").permitAll()
+                        .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/h2-console/*").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -54,18 +58,15 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .build();
     }
 
     @Bean
     public AuthenticationProvider daoAuthProvider(AuthenticationManagerBuilder auth) {
-
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userService);
         provider.setPasswordEncoder(passwordEncoder);
-
         return provider;
     }
 }

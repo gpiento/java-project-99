@@ -1,11 +1,10 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
-import hexlet.code.model.Task;
-import hexlet.code.model.TaskStatus;
-import hexlet.code.repository.TaskRepository;
-import hexlet.code.repository.TaskStatusRepository;
+import hexlet.code.dto.label.LabelUpdateDTO;
+import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.model.Label;
+import hexlet.code.repository.LabelRepository;
 import hexlet.code.util.ModelGenerator;
 import jakarta.transaction.Transactional;
 import net.datafaker.Faker;
@@ -18,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -28,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,16 +36,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("development")
-public class TaskStatusControllerTest {
+public class LabelControllerTest {
 
-    private TaskStatus testTaskStatus;
-    private Task testTask;
-    private JwtRequestPostProcessor token;
+    private Label testLabel;
+    private SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor token;
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private TaskStatusRepository taskStatusRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -53,81 +50,72 @@ public class TaskStatusControllerTest {
     @Autowired
     private Faker faker;
     @Autowired
-    private TaskRepository taskRepository;
+    private LabelRepository labelRepository;
 
     @BeforeEach
     public void setUp() {
-        taskStatusRepository.deleteAll();
         token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
-        testTaskStatus = Instancio.of(modelGenerator.getTaskStatusModel()).create();
-        testTask = Instancio.of(modelGenerator.getTaskModel()).create();
-//        testTaskStatus.addTask(testTask);
+        testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
     }
 
     @AfterEach
     public void tearDown() {
-        taskStatusRepository.deleteAll();
+//        labelRepository.deleteAll();
     }
 
     @Test
     public void testIndex() throws Exception {
-        mockMvc.perform(get("/api/task_statuses").with(token))
+        mockMvc.perform(get("/api/labels").with(token))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void testCreate() throws Exception {
-        mockMvc.perform(post("/api/task_statuses")
+        mockMvc.perform(post("/api/labels")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testTaskStatus))
+                        .content(objectMapper.writeValueAsString(testLabel))
                         .with(token))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
-                .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
+                .andExpect(jsonPath("$.name").value(testLabel.getName()))
                 .andExpect(jsonPath("$.createdAt").exists());
-        taskStatusRepository.delete(testTaskStatus);
+        labelRepository.delete(testLabel);
     }
 
     @Test
     public void testShow() throws Exception {
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        mockMvc.perform(get("/api/task_statuses/{id}", testTaskStatus.getId()).with(token))
+        testLabel = labelRepository.save(testLabel);
+        mockMvc.perform(get("/api/labels/{id}", testLabel.getId()).with(token))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(testTaskStatus.getId()))
-                .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
-                .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
+                .andExpect(jsonPath("$.id").value(testLabel.getId()))
+                .andExpect(jsonPath("$.name").value(testLabel.getName()))
                 .andExpect(jsonPath("$.createdAt").exists());
-        taskStatusRepository.delete(testTaskStatus);
+        labelRepository.delete(testLabel);
     }
 
     @Test
     public void testUpdate() throws Exception {
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        TaskStatusUpdateDTO taskStatusUpdateDTO = new TaskStatusUpdateDTO(
-                JsonNullable.of(faker.name().firstName()),
-                JsonNullable.of(faker.internet().domainWord().toLowerCase().replace("-", "_"))
-        );
-        mockMvc.perform(put("/api/task_statuses/{id}", testTaskStatus.getId())
+        testLabel = labelRepository.save(testLabel);
+        LabelUpdateDTO labelUpdateDTO = new LabelUpdateDTO();
+        labelUpdateDTO.setName(JsonNullable.of(faker.name().firstName()));
+        mockMvc.perform(put("/api/labels/{id}", testLabel.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(taskStatusUpdateDTO))
+                        .content(objectMapper.writeValueAsString(labelUpdateDTO))
                         .with(token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testTaskStatus.getId()))
-                .andExpect(jsonPath("$.name").value(taskStatusUpdateDTO.getName().get()))
-                .andExpect(jsonPath("$.slug").value(taskStatusUpdateDTO.getSlug().get()))
-                .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
-                .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
+                .andDo(print())
+                .andExpect(jsonPath("$.id").value(testLabel.getId()))
+                .andExpect(jsonPath("$.name").value(labelUpdateDTO.getName().get()))
                 .andExpect(jsonPath("$.createdAt").exists());
-        taskStatusRepository.delete(testTaskStatus);
+        labelRepository.delete(testLabel);
     }
 
     @Test
     public void destroy() throws Exception {
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        mockMvc.perform(delete("/api/task_statuses/{id}", testTaskStatus.getId()).with(token))
+        testLabel = labelRepository.save(testLabel);
+        mockMvc.perform(delete("/api/labels/{id}", testLabel.getId()).with(token))
                 .andExpect(status().isNoContent());
-        assertFalse(taskStatusRepository.existsById(testTaskStatus.getId()));
+        assertFalse(labelRepository.existsById(testLabel.getId()));
     }
 }

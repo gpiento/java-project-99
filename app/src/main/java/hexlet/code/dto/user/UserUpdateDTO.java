@@ -1,4 +1,4 @@
-package hexlet.code.dto.users;
+package hexlet.code.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -18,5 +18,5 @@ public class UserUpdateDTO {
     private JsonNullable<String> lastName;
 
     @Size(min = 3)
-    private JsonNullable<String> passwordDigest;
+    private JsonNullable<String> password;
 }

@@ -3,32 +3,29 @@ package hexlet.code.service;
 import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TaskService {
 
-    private final TaskMapper taskMapper;
-    private final TaskRepository taskRepository;
+    @Autowired
+    private TaskMapper taskMapper;
+    @Autowired
+    private TaskRepository taskRepository;
 
-    public TaskService(TaskMapper taskMapper, TaskRepository taskRepository) {
 
-        this.taskMapper = taskMapper;
-        this.taskRepository = taskRepository;
-    }
-
-    public ResponseEntity<TaskDTO> getTaskById(Long id) {
-        Optional<Task> taskOptional = taskRepository.findById(id);
-        return taskOptional.map(t -> ResponseEntity.ok(taskMapper.map(t)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public TaskDTO getTaskById(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task '" + id + "' not found"));
+        return taskMapper.map(task);
     }
 
     public List<TaskDTO> getAll() {
@@ -38,37 +35,25 @@ public class TaskService {
                 .toList();
     }
 
-    public ResponseEntity<TaskDTO> create(TaskCreateDTO taskCreateDTO) {
-        Optional<Task> taskOptional = taskRepository.findByName(taskCreateDTO.getName());
-        if (taskOptional.isPresent()) {
-            Task task = taskMapper.map(taskCreateDTO);
-            task = taskRepository.save(task);
-            return ResponseEntity.ok(taskMapper.map(task));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+    public TaskDTO create(TaskCreateDTO taskCreateDTO) {
+        Task task = taskMapper.map(taskCreateDTO);
+        task = taskRepository.save(task);
+        return taskMapper.map(task);
     }
 
-    public ResponseEntity<TaskDTO> update(Long id, TaskUpdateDTO taskUpdateDTO) {
-        Optional<Task> taskOptional = taskRepository.findById(id);
-        if (taskOptional.isPresent()) {
-            Task task = taskOptional.get();
-            taskMapper.update(taskUpdateDTO, task);
-            task = taskRepository.save(task);
-            return ResponseEntity.ok(taskMapper.map(task));
-
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public TaskDTO update(Long id, TaskUpdateDTO taskUpdateDTO) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task with id '" + id + "' not found"));
+        taskMapper.update(taskUpdateDTO, task);
+        task = taskRepository.save(task);
+        return taskMapper.map(task);
     }
 
-    public ResponseEntity<HttpStatus> delete(Long id) {
-        Optional<Task> taskOptional = taskRepository.findById(id);
-        if (taskOptional.isPresent()) {
-            taskRepository.delete(taskOptional.get());
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public void delete(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Task '" + id + "' not found"));
+        taskRepository.deleteById(id);
     }
 }

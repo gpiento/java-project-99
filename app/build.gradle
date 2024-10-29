@@ -119,7 +119,7 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
-    additionalSourceDirs.setFrom files('app/build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper')
+    additionalSourceDirs.setFrom files('build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper')
 }
 
 testlogger {

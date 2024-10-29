@@ -9,7 +9,7 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 sentry:
   dsn: https://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@o0.ingest.sentry.io/0
   exception-resolver-order: -2147483647

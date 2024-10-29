@@ -2,7 +2,6 @@ package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.dto.label.LabelUpdateDTO;
-import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.util.ModelGenerator;

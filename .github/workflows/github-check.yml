@@ -25,10 +25,9 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Use Sentry Auth Token
-        run: echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> $GITHUB_ENV
-
       - name: Build with Gradle
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: ./gradlew build
 
       - name: Check for build errors
@@ -38,7 +37,7 @@ jobs:
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v6.0.0
         env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
           JACOCO_SOURCE_PATH: app/src/main/java
         with:
           coverageCommand: make report

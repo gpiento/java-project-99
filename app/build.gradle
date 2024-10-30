@@ -13,9 +13,9 @@ plugins {
     id 'com.adarshr.test-logger' version '4.0.0'
     id 'com.github.ben-manes.versions' version '0.51.0'
 
-    id 'org.springframework.boot' version '3.3.4'
+    id 'org.springframework.boot' version '3.3.5'
     id 'io.spring.dependency-management' version '1.1.6'
-//    id 'io.sentry.jvm.gradle' version '4.11.0'
+    id 'io.sentry.jvm.gradle' version '4.13.0'
 }
 
 group = 'hexlet.code'
@@ -31,20 +31,20 @@ repositories {
 }
 
 ext {
-    springVersion = '6.1.13'
-    springBootVersion = '3.3.4'
-    springSecurityTestVersion = '6.3.3'
+    springVersion = '6.1.14'
+    springBootVersion = '3.3.5'
+    springSecurityTestVersion = '6.3.4'
     mapStructVersion = '1.6.2'
     jacksonDatabindNullableVersion = '0.2.6'
     h2Version = '2.3.232'
     postgresqlVersion = '42.7.4'
     lombokVersion = '1.18.34'
     lombokMapstructBindingVersion = '0.2.0'
-    datafakerVersion = '2.4.0'
+    datafakerVersion = '2.4.1'
     instancioVersion = '5.0.2'
     sentryVersion = '7.13.0'
     jsonUnitVersion = '3.4.1'
-    junitVersion = '5.11.2'
+    junitVersion = '5.11.3'
     junitPlatformVersion = '1.11.1'
 }
 
@@ -95,6 +95,8 @@ dependencies {
 //    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
 //    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
     //testImplementation libs.junit.jupiter
     //implementation 'com.google.guava:guava:33.0.0-jre'
 //    implementation 'org.slf4j:slf4j-api:1.7.32'
@@ -119,7 +121,6 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
-    additionalSourceDirs.setFrom files('build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper')
 }
 
 testlogger {
@@ -159,14 +160,14 @@ dependencyUpdates {
     }
 }
 
-//sentry {
+sentry {
 //     Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
 //     This enables source context, allowing you to see your source
 //     code as part of your stack traces in Sentry.
-//    includeSourceContext = true
+    includeSourceContext = true
 //
-//    org = "mycompany-k9"
-//    projectName = "java-spring-boot"
-//    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+    org = "mycompany-k9"
+    projectName = "java-spring-boot"
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
 //    authToken = "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"
-//}
+}

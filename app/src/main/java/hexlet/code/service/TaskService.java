@@ -2,12 +2,15 @@ package hexlet.code.service;
 
 import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
+import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
+import hexlet.code.specification.TaskSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,20 +22,19 @@ public class TaskService {
     private TaskMapper taskMapper;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private TaskSpecification taskSpecification;
 
+    public List<TaskDTO> getAll(TaskParamsDTO taskParamsDTO) {
+        Specification<Task> spec = taskSpecification.build(taskParamsDTO);
+        return taskMapper.map(taskRepository.findAll(spec));
+    }
 
     public TaskDTO getTaskById(Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Task '" + id + "' not found"));
         return taskMapper.map(task);
-    }
-
-    public List<TaskDTO> getAll() {
-        List<Task> taskStatusList = taskRepository.findAll();
-        return taskStatusList.stream()
-                .map(taskMapper::map)
-                .toList();
     }
 
     public TaskDTO create(TaskCreateDTO taskCreateDTO) {

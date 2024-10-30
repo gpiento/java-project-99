@@ -25,6 +25,9 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Use Sentry Auth Token
+        run: echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> $GITHUB_ENV
+
       - name: Build with Gradle
         run: ./gradlew build
 

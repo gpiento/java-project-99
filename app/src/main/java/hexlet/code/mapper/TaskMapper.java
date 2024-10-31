@@ -20,7 +20,8 @@ import java.util.List;
         uses = {JsonNullableMapper.class,
                 ReferenceMapper.class,
                 LabelMapper.class,
-                TaskStatusMapper.class},
+                TaskStatusMapper.class,
+                UserMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE

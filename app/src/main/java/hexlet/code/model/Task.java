@@ -15,11 +15,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -32,33 +30,24 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
 public class Task implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ToString.Include
-    @EqualsAndHashCode.Include
     private Long id;
 
     @NotBlank
     @Size(min = 1)
-    @ToString.Include
     private String name;
 
-    @ToString.Include
     private Integer index;
 
-    @ToString.Include
     private String description;
 
-    @ToString.Include
     @ManyToOne(fetch = FetchType.EAGER)
     private TaskStatus taskStatus;
 
-    @ToString.Include
     @ManyToOne(fetch = FetchType.EAGER)
     private User assignee;
 

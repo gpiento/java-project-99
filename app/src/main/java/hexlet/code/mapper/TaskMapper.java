@@ -4,15 +4,12 @@ import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.model.Task;
-import hexlet.code.repository.LabelRepository;
-import hexlet.code.repository.TaskStatusRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -27,11 +24,6 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public abstract class TaskMapper {
-
-    @Autowired
-    private LabelRepository labelRepository;
-    @Autowired
-    private TaskStatusRepository taskStatusRepository;
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
@@ -53,7 +45,6 @@ public abstract class TaskMapper {
     @Mapping(target = "assignee.id", source = "assigneeId")
     @Mapping(target = "labels", source = "taskLabelIds")
     public abstract Task map(TaskCreateDTO dto);
-
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")

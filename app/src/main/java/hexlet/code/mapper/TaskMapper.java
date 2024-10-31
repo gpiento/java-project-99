@@ -62,6 +62,4 @@ public abstract class TaskMapper {
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
 
     public abstract List<TaskDTO> map(List<Task> modelList);
-
-
 }

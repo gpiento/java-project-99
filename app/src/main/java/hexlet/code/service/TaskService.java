@@ -27,7 +27,7 @@ public class TaskService {
 
     public List<TaskDTO> getAll(TaskParamsDTO taskParamsDTO) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
-        return taskMapper.map(taskRepository.findAll(spec));
+        return taskRepository.findAll(spec).stream().map(taskMapper::map).toList();
     }
 
     public TaskDTO getTaskById(Long id) {

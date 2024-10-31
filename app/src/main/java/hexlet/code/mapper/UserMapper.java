@@ -3,6 +3,7 @@ package hexlet.code.mapper;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import org.mapstruct.BeforeMapping;
@@ -35,7 +36,10 @@ public abstract class UserMapper {
 
     public abstract User map(UserDTO userDTO);
 
-    public abstract User map(Long id);
+    public User map(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User " + id + " not found"));
+    }
 
     @Mapping(target = "passwordDigest", source = "password")
     public abstract User map(UserCreateDTO userCreateDTO);

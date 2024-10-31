@@ -4,6 +4,7 @@ import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.model.User;
+import hexlet.code.repository.UserRepository;
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,12 +26,16 @@ public abstract class UserMapper {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
 
     // TODO: fix?
 //    @Mapping(target = "password", ignore = true)
     public abstract UserDTO map(User user);
 
     public abstract User map(UserDTO userDTO);
+
+    public abstract User map(Long id);
 
     @Mapping(target = "passwordDigest", source = "password")
     public abstract User map(UserCreateDTO userCreateDTO);

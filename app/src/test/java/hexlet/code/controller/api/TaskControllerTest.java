@@ -128,7 +128,7 @@ public class TaskControllerTest {
         taskCreateDTO.setContent(testTask.getDescription());
         taskCreateDTO.setStatus(testTaskStatus.getSlug());
         taskCreateDTO.setAssigneeId(testUser.getId());
-        taskCreateDTO.setLabelIds(Set.of(testLabel.getId()));
+        taskCreateDTO.setTaskLabelIds(Set.of(testLabel.getId()));
 
         mockMvc.perform(post("/api/tasks")
                         .contentType(MediaType.APPLICATION_JSON)

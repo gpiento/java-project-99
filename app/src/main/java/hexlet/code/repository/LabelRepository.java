@@ -14,5 +14,5 @@ public interface LabelRepository extends JpaRepository<Label, Long> {
 
     boolean existsByName(String slug);
 
-    Set<Label> findByIdIn(Set<Long> taskLabelIds);
+    Set<Label> findByIdIn(Set<Long> labelIds);
 }

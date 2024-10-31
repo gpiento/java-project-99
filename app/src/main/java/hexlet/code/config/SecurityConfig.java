@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

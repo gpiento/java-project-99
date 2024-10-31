@@ -1,6 +1,5 @@
 package hexlet.code.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -22,7 +21,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -53,23 +51,21 @@ public class Task implements BaseEntity {
     @ToString.Include
     private String description;
 
-    // TODO: fix this nullable to false
+    @ToString.Include
     @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "task_status_id")
     private TaskStatus taskStatus;
 
-    @JsonIgnore
+    @ToString.Include
     @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "user_id")
     private User assignee;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
 //    @JoinTable(
 //            name = "task_labels",
 //            joinColumns = @JoinColumn(name = "label_id"),
 //            inverseJoinColumns = @JoinColumn(name = "task_id")
 //    )
-    private Set<Label> labels = new LinkedHashSet<>();
+    private Set<Label> labels;
 
     @CreatedDate
     private LocalDate createdAt;

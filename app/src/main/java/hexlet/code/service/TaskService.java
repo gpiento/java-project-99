@@ -9,6 +9,7 @@ import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.specification.TaskSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class TaskService {
         return taskMapper.map(task);
     }
 
+    @Transactional
     public TaskDTO create(TaskCreateDTO taskCreateDTO) {
         Task task = taskMapper.map(taskCreateDTO);
         task = taskRepository.save(task);
@@ -53,9 +55,6 @@ public class TaskService {
     }
 
     public void delete(Long id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Task '" + id + "' not found"));
         taskRepository.deleteById(id);
     }
 }

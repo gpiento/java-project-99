@@ -1,8 +1,8 @@
 package hexlet.code.component;
 
-import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.model.Label;
 import hexlet.code.model.TaskStatus;
+import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -43,12 +43,12 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         if (!userRepository.existsByEmail(ADMIN_EMAIL)) {
-            UserCreateDTO userCreateDTO = new UserCreateDTO();
-            userCreateDTO.setEmail(ADMIN_EMAIL);
-            userCreateDTO.setFirstName("Admin");
-            userCreateDTO.setLastName("Rutovich");
-            userCreateDTO.setPassword("qwerty");
-            userService.createUser(userCreateDTO);
+            User user = new User();
+            user.setEmail(ADMIN_EMAIL);
+            user.setFirstName("Admin");
+            user.setLastName("Rutovich");
+            user.setPasswordDigest("qwerty");
+            customUserDetailsService.createUser(user);
         }
 
         List<TaskStatus> defaultTaskStatuses = Arrays.asList(

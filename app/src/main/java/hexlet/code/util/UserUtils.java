@@ -26,4 +26,10 @@ public class UserUtils {
         return userRepository.findByEmail("hexlet@example.com")
                 .orElseThrow(() -> new ResourceNotFoundException("User 'hexlet@example.com' not found"));
     }
+
+    public boolean isAuthor(Long id) {
+        String postAuthorEmail = userRepository.findById(id).get().getEmail();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return postAuthorEmail.equals(authentication.getName());
+    }
 }

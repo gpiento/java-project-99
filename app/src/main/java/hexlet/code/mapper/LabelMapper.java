@@ -17,7 +17,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(
-        uses = {JsonNullableMapper.class, ReferenceMapper.class},
+        uses = {
+                JsonNullableMapper.class,
+                ReferenceMapper.class,
+                TaskMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
@@ -37,7 +40,7 @@ public abstract class LabelMapper {
         return labels.stream().map(Label::getId).collect(Collectors.toSet());
     }
 
-    public Set<Label> map(Set<Long> listId) {
+    public Set<Label> toEntity(Set<Long> listId) {
         return new HashSet<>(labelRepository.findAllById(listId));
     }
 }

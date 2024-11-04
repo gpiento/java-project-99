@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import java.util.Collection;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class User implements BaseEntity, UserDetails {
 
@@ -40,9 +38,10 @@ public class User implements BaseEntity, UserDetails {
 
     private String lastName;
 
-    @Column(unique = true, nullable = false, length = 200)
+    @Column(unique = true)
     private String email;
 
+    @Column(name = "password")
     private String passwordDigest;
 
     @CreatedDate
@@ -50,11 +49,6 @@ public class User implements BaseEntity, UserDetails {
 
     @LastModifiedDate
     private LocalDate updatedAt;
-
-    public User(String email, String password) {
-        this.email = email;
-        this.passwordDigest = password;
-    }
 
     @Override
     public String getPassword() {

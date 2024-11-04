@@ -13,7 +13,10 @@ import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(
-        uses = {JsonNullableMapper.class, ReferenceMapper.class},
+        uses = {
+                JsonNullableMapper.class,
+                ReferenceMapper.class,
+                TaskMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE

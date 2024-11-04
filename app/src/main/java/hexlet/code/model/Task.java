@@ -1,5 +1,6 @@
 package hexlet.code.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -49,7 +50,8 @@ public class Task implements BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     private TaskStatus taskStatus;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(optional = true)
+    @JsonIgnore
     private User assignee;
 
     @ManyToMany(

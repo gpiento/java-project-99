@@ -18,7 +18,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "TASK_STATUSES")
 @Getter
 @Setter
 @AllArgsConstructor

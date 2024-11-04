@@ -58,8 +58,6 @@ public class TaskStatusService {
     }
 
     public void delete(Long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status " + id + " not found"));
-        taskStatusRepository.delete(taskStatus);
+        taskStatusRepository.deleteById(id);
     }
 }

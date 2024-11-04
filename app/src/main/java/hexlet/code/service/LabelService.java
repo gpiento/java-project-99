@@ -61,8 +61,6 @@ public class LabelService {
     }
 
     public void delete(Long id) {
-        Label label = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Label " + id + " not found"));
-        labelRepository.delete(label);
+        labelRepository.deleteById(id);
     }
 }

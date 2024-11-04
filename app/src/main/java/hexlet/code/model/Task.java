@@ -1,6 +1,5 @@
 package hexlet.code.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -27,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tasks")
+@Table(name = "TASKS")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -48,10 +47,11 @@ public class Task implements BaseEntity {
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "task_status_id", referencedColumnName = "id")
     private TaskStatus taskStatus;
 
     @ManyToOne(optional = true)
-    @JsonIgnore
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User assignee;
 
     @ManyToMany(

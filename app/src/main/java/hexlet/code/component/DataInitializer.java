@@ -7,23 +7,19 @@ import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.CustomUserDetailsService;
-import hexlet.code.service.LabelService;
-import hexlet.code.service.TaskStatusService;
-import hexlet.code.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
-    private static final String ADMIN_EMAIL = "hexlet@example.com";
+    public static final String ADMIN_EMAIL = "hexlet@example.com";
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -33,47 +29,32 @@ public class DataInitializer implements ApplicationRunner {
     private LabelRepository labelRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private TaskStatusService taskStatusService;
-    @Autowired
-    private LabelService labelService;
 
     @Override
     public void run(ApplicationArguments args) {
         if (!userRepository.existsByEmail(ADMIN_EMAIL)) {
-            User user = new User();
-            user.setEmail(ADMIN_EMAIL);
-            user.setFirstName("Admin");
-            user.setLastName("Rutovich");
-            user.setPasswordDigest("qwerty");
+            User user = User.builder()
+                    .email(ADMIN_EMAIL)
+                    .firstName("Admin")
+                    .lastName("Rutovich")
+                    .passwordDigest("qwerty")
+                    .build();
             customUserDetailsService.createUser(user);
         }
 
-        List<TaskStatus> defaultTaskStatuses = Arrays.asList(
-                new TaskStatus("Draft", "draft"),
-                new TaskStatus("To Review", "to_review"),
-                new TaskStatus("To Be Fixed", "to_be_fixed"),
-                new TaskStatus("To Publish", "to_publish"),
-                new TaskStatus("Published", "published")
-        );
+        Stream.of(
+                        new TaskStatus("Draft", "draft"),
+                        new TaskStatus("To Review", "to_review"),
+                        new TaskStatus("To Be Fixed", "to_be_fixed"),
+                        new TaskStatus("To Publish", "to_publish"),
+                        new TaskStatus("Published", "published")
+                )
+                .filter(taskStatus -> !taskStatusRepository.existsBySlug(taskStatus.getSlug()))
+                .forEach(taskStatusRepository::save);
 
-        for (TaskStatus taskStatus : defaultTaskStatuses) {
-            if (!taskStatusRepository.existsBySlug(taskStatus.getSlug())) {
-                taskStatusRepository.save(taskStatus);
-            }
-        }
-
-        List<Label> defaultLabels = Arrays.asList(
-                new Label("bug"),
-                new Label("feature")
-        );
-
-        for (Label defaultLabelName : defaultLabels) {
-            if (!labelRepository.existsByName(defaultLabelName.getName())) {
-                labelRepository.save(defaultLabelName);
-            }
-        }
+        Stream.of("bug", "feature")
+                .map(Label::new)
+                .filter(label -> !labelRepository.existsByName(label.getName()))
+                .forEach(labelRepository::save);
     }
 }

@@ -19,9 +19,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static hexlet.code.component.DataInitializer.ADMIN_EMAIL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@ActiveProfiles("development")
 public class TaskStatusControllerTest {
 
     private TaskStatus testTaskStatus;
@@ -58,7 +57,7 @@ public class TaskStatusControllerTest {
     @BeforeEach
     public void setUp() {
         taskStatusRepository.deleteAll();
-        token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
+        token = jwt().jwt(builder -> builder.subject(ADMIN_EMAIL));
         testTaskStatus = Instancio.of(modelGenerator.getTaskStatusModel()).create();
         testTask = Instancio.of(modelGenerator.getTaskModel()).create();
 //        testTaskStatus.addTask(testTask);

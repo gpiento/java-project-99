@@ -1,6 +1,5 @@
 package hexlet.code.util;
 
-import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +19,6 @@ public class UserUtils {
         }
         String email = authentication.getName();
         return userRepository.findByEmail(email).get();
-    }
-
-    public User getTestUser() {
-        return userRepository.findByEmail("hexlet@example.com")
-                .orElseThrow(() -> new ResourceNotFoundException("User 'hexlet@example.com' not found"));
     }
 
     public boolean isAuthor(Long id) {

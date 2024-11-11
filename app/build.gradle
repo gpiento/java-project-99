@@ -34,7 +34,8 @@ ext {
     springVersion = '6.1.14'
     springBootVersion = '3.3.5'
     springSecurityTestVersion = '6.3.4'
-    mapStructVersion = '1.6.2'
+    hibernateCoreVersion = '6.6.2.Final'
+    mapStructVersion = '1.6.3'
     jacksonDatabindNullableVersion = '0.2.6'
     h2Version = '2.3.232'
     postgresqlVersion = '42.7.4'
@@ -43,14 +44,13 @@ ext {
     datafakerVersion = '2.4.1'
     instancioVersion = '5.0.2'
     sentryVersion = '7.13.0'
-    jsonUnitVersion = '3.4.1'
+    jsonUnitVersion = '3.5.0'
     junitVersion = '5.11.3'
     junitPlatformVersion = '1.11.1'
 }
 
 dependencies {
     implementation "org.springframework:spring-core:$springVersion"
-
     implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
@@ -60,6 +60,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootVersion"
     testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+
+    implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
 
     implementation "org.mapstruct:mapstruct:$mapStructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
@@ -164,7 +166,7 @@ sentry {
 //     Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
 //     This enables source context, allowing you to see your source
 //     code as part of your stack traces in Sentry.
-    includeSourceContext =  false
+    includeSourceContext = false
     org = "mycompany-k9"
     projectName = "java-spring-boot"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")

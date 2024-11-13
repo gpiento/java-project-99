@@ -19,8 +19,6 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
-    public static final String ADMIN_EMAIL = "hexlet@example.com";
-
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
     @Autowired
@@ -29,15 +27,15 @@ public class DataInitializer implements ApplicationRunner {
     private LabelRepository labelRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private DefaultUserProperties defaultUser;
 
     @Override
     public void run(ApplicationArguments args) {
-        if (!userRepository.existsByEmail(ADMIN_EMAIL)) {
+        if (!userRepository.existsByEmail(defaultUser.getEmail())) {
             User user = User.builder()
-                    .email(ADMIN_EMAIL)
-                    .firstName("Admin")
-                    .lastName("Rutovich")
-                    .passwordDigest("qwerty")
+                    .email(defaultUser.getEmail())
+                    .passwordDigest(defaultUser.getPassword())
                     .build();
             customUserDetailsService.createUser(user);
         }

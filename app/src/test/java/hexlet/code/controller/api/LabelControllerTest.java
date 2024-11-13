@@ -1,6 +1,7 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hexlet.code.component.DefaultUserProperties;
 import hexlet.code.dto.label.LabelUpdateDTO;
 import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
@@ -8,7 +9,6 @@ import hexlet.code.util.ModelGenerator;
 import jakarta.transaction.Transactional;
 import net.datafaker.Faker;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openapitools.jackson.nullable.JsonNullable;
@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static hexlet.code.component.DataInitializer.ADMIN_EMAIL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -49,16 +48,13 @@ public class LabelControllerTest {
     private Faker faker;
     @Autowired
     private LabelRepository labelRepository;
+    @Autowired
+    private DefaultUserProperties defaultUser;
 
     @BeforeEach
     public void setUp() {
-        token = jwt().jwt(builder -> builder.subject(ADMIN_EMAIL));
+        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
         testLabel = Instancio.of(modelGenerator.getLabelModel()).create();
-    }
-
-    @AfterEach
-    public void tearDown() {
-//        labelRepository.deleteAll();
     }
 
     @Test

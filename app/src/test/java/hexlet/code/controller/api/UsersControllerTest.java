@@ -1,6 +1,7 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hexlet.code.component.DefaultUserProperties;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.model.Task;
 import hexlet.code.model.User;
@@ -23,7 +24,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
 
-import static hexlet.code.component.DataInitializer.ADMIN_EMAIL;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -58,6 +58,9 @@ public class UsersControllerTest {
     private ModelGenerator modelGenerator;
     @Autowired
     private Faker faker;
+    @Autowired
+    private DefaultUserProperties defaultUser;
+
 
     @BeforeEach
     public void beforeEachSetup() {
@@ -65,7 +68,7 @@ public class UsersControllerTest {
                 .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
                 .apply(springSecurity())
                 .build();
-        token = jwt().jwt(builder -> builder.subject(ADMIN_EMAIL));
+        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
         testTask = Instancio.of(modelGenerator.getTaskModel()).create();
         testUser = Instancio.of(modelGenerator.getUserModel()).create();
         // TODO: add assignee

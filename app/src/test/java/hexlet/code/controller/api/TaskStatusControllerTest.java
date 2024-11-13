@@ -1,6 +1,7 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hexlet.code.component.DefaultUserProperties;
 import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
@@ -21,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static hexlet.code.component.DataInitializer.ADMIN_EMAIL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -53,11 +53,14 @@ public class TaskStatusControllerTest {
     private Faker faker;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private DefaultUserProperties defaultUser;
+
 
     @BeforeEach
     public void setUp() {
         taskStatusRepository.deleteAll();
-        token = jwt().jwt(builder -> builder.subject(ADMIN_EMAIL));
+        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
         testTaskStatus = Instancio.of(modelGenerator.getTaskStatusModel()).create();
         testTask = Instancio.of(modelGenerator.getTaskModel()).create();
 //        testTaskStatus.addTask(testTask);

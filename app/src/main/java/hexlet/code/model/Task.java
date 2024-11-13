@@ -50,8 +50,8 @@ public class Task implements BaseEntity {
     @JoinColumn(name = "task_status_id", referencedColumnName = "id")
     private TaskStatus taskStatus;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User assignee;
 
     @ManyToMany(

@@ -31,3 +31,6 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui/index.html
+user:
+  email: hexlet@example.com
+  password: qwerty

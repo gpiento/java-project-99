@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "TASKS")
+@Table(name = "tasks")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

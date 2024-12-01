@@ -32,3 +32,4 @@ check-deps:
 	./gradlew dependencyUpdates -Drevision=release
 
 build-run: build install run-dist
+

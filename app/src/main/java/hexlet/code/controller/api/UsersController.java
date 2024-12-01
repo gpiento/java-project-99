@@ -5,7 +5,6 @@ import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,48 +25,44 @@ import java.util.List;
 //@Tag(name = "User Management", description = "Operations pertaining to users")
 public class UsersController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> usersDTO = userService.getAllUsers();
-
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(usersDTO.size()))
                 .body(usersDTO);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserDTO getUserById(@PathVariable Long id) {
-
-        return userService.getUserById(id);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        UserDTO userDTO = userService.getUserById(id);
+        return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-
-        return userService.createUser(userCreateDTO);
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        UserDTO createUser = userService.createUser(userCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("@userUtils.isAuthor(#id)")
-    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-
-        return userService.updateUser(id, userUpdateDTO);
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable Long id,
+                                                  @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        UserDTO updateUser = userService.updateUser(id, userUpdateDTO);
+        return ResponseEntity.ok(updateUser);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@userUtils.isAuthor(#id)")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-
-        userService.deleteUser(id);
-
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

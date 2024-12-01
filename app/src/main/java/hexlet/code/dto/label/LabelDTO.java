@@ -16,4 +16,8 @@ public class LabelDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
+
+    public LabelDTO(String name) {
+        this.name = name;
+    }
 }

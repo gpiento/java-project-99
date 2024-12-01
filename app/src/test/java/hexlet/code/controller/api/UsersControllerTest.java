@@ -1,7 +1,6 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.component.DefaultUserProperties;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.model.Task;
 import hexlet.code.model.User;
@@ -18,20 +17,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.nio.charset.StandardCharsets;
-
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,10 +35,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 //@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UsersControllerTest {
-
+    private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("test@example.com"));
     private User testUser;
     private Task testTask;
-    private JwtRequestPostProcessor token;
+//    private JwtRequestPostProcessor token;
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,17 +52,10 @@ public class UsersControllerTest {
     private ModelGenerator modelGenerator;
     @Autowired
     private Faker faker;
-    @Autowired
-    private DefaultUserProperties defaultUser;
 
 
     @BeforeEach
     public void beforeEachSetup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .defaultResponseCharacterEncoding(StandardCharsets.UTF_8)
-                .apply(springSecurity())
-                .build();
-        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
         testTask = Instancio.of(modelGenerator.getTaskModel()).create();
         testUser = Instancio.of(modelGenerator.getUserModel()).create();
         // TODO: add assignee
@@ -84,22 +71,31 @@ public class UsersControllerTest {
     public void getAllUsers() throws Exception {
         mockMvc.perform(get("/api/users")
                         .with(token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    public void getUserById() throws Exception {
+    public void getUserByIdSuccess() throws Exception {
         testUser = userRepository.save(testUser);
         mockMvc.perform(get("/api/users/{id}", testUser.getId())
                         .with(token))
-                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testUser.getId()))
-                .andExpect(jsonPath("$.email").value(testUser.getEmail()))
-                .andExpect(jsonPath("$.firstName").value(testUser.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(testUser.getLastName()));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpectAll(
+                        jsonPath("$.id").value(testUser.getId()),
+                        jsonPath("$.email").value(testUser.getEmail()),
+                        jsonPath("$.firstName").value(testUser.getFirstName()),
+                        jsonPath("$.lastName").value(testUser.getLastName())
+                );
+    }
+
+    @Test
+    public void getUserByIdNotFound() throws Exception {
+        testUser = userRepository.save(testUser);
+        mockMvc.perform(get("/api/users/{id}", 999999999)
+                        .with(token))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -108,7 +104,6 @@ public class UsersControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testUser))
                         .with(token))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.email").value(testUser.getEmail()))
                 .andExpect(jsonPath("$.firstName").value(testUser.getFirstName()))
@@ -116,7 +111,56 @@ public class UsersControllerTest {
     }
 
     @Test
-    public void updateUser() throws Exception {
+    public void createUserInvalidEmail() throws Exception {
+        User invalidUser = User.builder()
+                .email("invalid-email")
+                .lastName("Doe")
+                .build();
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidUser))
+                        .with(token))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createUserDuplicateEmail() throws Exception {
+        User existingUser = userRepository.save(User.builder()
+                .email("existing@example.com")
+                .firstName("Existing")
+                .lastName("User")
+                .passwordDigest("qwerty")
+                .build());
+
+        User newUser = User.builder()
+                .email("existing@example.com")
+                .firstName("New")
+                .lastName("User")
+                .build();
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newUser))
+                        .with(token))
+                .andExpect(status().isBadRequest());
+
+        userRepository.delete(existingUser);
+    }
+
+    @Test
+    void createUserEmptyFields() throws Exception {
+        User emptyUser = User.builder().build();
+
+        mockMvc.perform(post("/api/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(emptyUser))
+                        .with(token))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateUserById() throws Exception {
         testUser = userRepository.save(testUser);
 
         UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
@@ -127,7 +171,6 @@ public class UsersControllerTest {
                         .content(objectMapper.writeValueAsString(userUpdateDTO))
                         .with(token))
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(jsonPath("$.id").value(testUser.getId()))
                 .andExpect(jsonPath("$.email").value(userUpdateDTO.getEmail().get()))
                 .andExpect(jsonPath("$.firstName").value(testUser.getFirstName()))

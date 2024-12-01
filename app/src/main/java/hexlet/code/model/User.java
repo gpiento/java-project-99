@@ -8,10 +8,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,14 +27,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "USERS")
+@Table(name = "users")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 @Builder
+@EqualsAndHashCode
+// TODO: hash || equals ?
 @EntityListeners(AuditingEntityListener.class)
 public class User implements BaseEntity, UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,6 +46,8 @@ public class User implements BaseEntity, UserDetails {
     private String lastName;
 
     @Column(unique = true, nullable = false)
+    @NotBlank
+    @Email
     private String email;
 
     @Column(name = "password", nullable = false)

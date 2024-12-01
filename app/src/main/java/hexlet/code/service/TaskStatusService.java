@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TaskStatusService {
@@ -23,41 +22,33 @@ public class TaskStatusService {
 
     public TaskStatusDTO getTaskStatusById(Long id) {
         TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status " + id + " not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '%d' not found".formatted(id)));
         return taskStatusMapper.map(taskStatus);
     }
 
     public List<TaskStatusDTO> getAll() {
         List<TaskStatus> taskStatusList = taskStatusRepository.findAll();
-
         return taskStatusList.stream()
                 .map(taskStatusMapper::map)
                 .toList();
     }
 
     public TaskStatusDTO create(TaskStatusCreateDTO taskStatusCreateDTO) {
-        Optional<TaskStatus> taskStatusOptional = taskStatusRepository.findBySlug(taskStatusCreateDTO.getSlug());
-        if (taskStatusOptional.isPresent()) {
-            throw new ResourceNotFoundException(
-                    "Task status with slug '" + taskStatusCreateDTO.getSlug() + "' already exists");
-        }
         TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
         taskStatus = taskStatusRepository.save(taskStatus);
-
         return taskStatusMapper.map(taskStatus);
     }
 
     public TaskStatusDTO update(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
         TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '%d' not found".formatted(id)));
         taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
         taskStatusRepository.save(taskStatus);
 
         return taskStatusMapper.map(taskStatus);
     }
 
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         taskStatusRepository.deleteById(id);
     }
 }

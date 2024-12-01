@@ -6,11 +6,11 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,11 +18,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "TASK_STATUSES")
+@Table(name = "task_statuses")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
 public class TaskStatus implements BaseEntity {
 
@@ -38,14 +39,4 @@ public class TaskStatus implements BaseEntity {
 
     @CreatedDate
     private LocalDate createdAt;
-
-    public TaskStatus(String name, String slug) {
-        this.name = name;
-        this.slug = slug;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDate.now();
-    }
 }

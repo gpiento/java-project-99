@@ -39,7 +39,7 @@ ext {
     jacksonDatabindNullableVersion = '0.2.6'
     h2Version = '2.3.232'
     postgresqlVersion = '42.7.4'
-    lombokVersion = '1.18.34'
+    lombokVersion = '1.18.36'
     lombokMapstructBindingVersion = '0.2.0'
     datafakerVersion = '2.4.1'
     instancioVersion = '5.0.2'
@@ -85,6 +85,7 @@ dependencies {
 //    implementation platform("io.sentry:sentry-bom:$sentryVersion") //import bom
 //    implementation('io.sentry:sentry') //no version specified
 //    implementation('io.sentry:sentry-logback') //no version specified
+    implementation 'org.slf4j:slf4j-api:2.0.16'
 
 
     testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"

@@ -7,8 +7,6 @@ import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.CustomUserDetailsService;
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -16,19 +14,25 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Stream;
 
 @Component
-@AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private TaskStatusRepository taskStatusRepository;
-    @Autowired
-    private LabelRepository labelRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private DefaultUserProperties defaultUser;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final TaskStatusRepository taskStatusRepository;
+    private final LabelRepository labelRepository;
+    private final UserRepository userRepository;
+    private final DefaultUserProperties defaultUser;
+
+    public DataInitializer(CustomUserDetailsService customUserDetailsService,
+                           TaskStatusRepository taskStatusRepository,
+                           LabelRepository labelRepository,
+                           UserRepository userRepository,
+                           DefaultUserProperties defaultUser) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.taskStatusRepository = taskStatusRepository;
+        this.labelRepository = labelRepository;
+        this.userRepository = userRepository;
+        this.defaultUser = defaultUser;
+    }
 
     @Override
     public void run(ApplicationArguments args) {
@@ -41,11 +45,11 @@ public class DataInitializer implements ApplicationRunner {
         }
 
         Stream.of(
-                        new TaskStatus("Draft", "draft"),
-                        new TaskStatus("To Review", "to_review"),
-                        new TaskStatus("To Be Fixed", "to_be_fixed"),
-                        new TaskStatus("To Publish", "to_publish"),
-                        new TaskStatus("Published", "published")
+                        TaskStatus.builder().name("Draft").slug("draft").build(),
+                        TaskStatus.builder().name("To Review").slug("to_review").build(),
+                        TaskStatus.builder().name("To Be Fixed").slug("to_be_fixed").build(),
+                        TaskStatus.builder().name("To Publish").slug("to_publish").build(),
+                        TaskStatus.builder().name("Published").slug("published").build()
                 )
                 .filter(taskStatus -> !taskStatusRepository.existsBySlug(taskStatus.getSlug()))
                 .forEach(taskStatusRepository::save);

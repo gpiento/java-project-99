@@ -44,7 +44,7 @@ public class TaskController {
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<TaskDTO>> index(TaskParamsDTO taskParamsDTO) {
-        List<TaskDTO> taskDTOS = taskService.getAll(taskParamsDTO);
+        List<TaskDTO> taskDTOS = taskService.getAllTasks(taskParamsDTO);
         return ResponseEntity
                 .ok()
                 .header("X-Total-Count", String.valueOf(taskDTOS.size()))
@@ -60,13 +60,13 @@ public class TaskController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public TaskDTO create(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
-        return taskService.create(taskCreateDTO);
+        return taskService.createTask(taskCreateDTO);
     }
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public TaskDTO update(@PathVariable Long id, @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
-        return taskService.update(id, taskUpdateDTO);
+        return taskService.updateTaskById(id, taskUpdateDTO);
     }
 
     @DeleteMapping("/{id}")

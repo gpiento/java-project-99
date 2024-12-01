@@ -31,8 +31,6 @@ public abstract class UserMapper {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // TODO: fix?
-//    @Mapping(target = "password", ignore = true)
     public abstract UserDTO map(User user);
 
     public abstract User map(UserDTO userDTO);

@@ -12,9 +12,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +31,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
 public class Task implements BaseEntity {
 
@@ -38,7 +39,6 @@ public class Task implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Size(min = 1)
     private String name;
 
@@ -66,11 +66,11 @@ public class Task implements BaseEntity {
     @CreatedDate
     private LocalDate createdAt;
 
-    private void addLabel(Label label) {
+    public void addLabel(Label label) {
         labels.add(label);
     }
 
-    private void removeLabel(Label label) {
+    public void removeLabel(Label label) {
         labels.remove(label);
     }
 }

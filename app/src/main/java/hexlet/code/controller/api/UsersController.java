@@ -63,6 +63,6 @@ public class UsersController {
     @PreAuthorize("@userUtils.isAuthor(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }

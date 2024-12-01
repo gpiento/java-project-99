@@ -72,13 +72,13 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void testIndex() throws Exception {
+    public void testGetAllTaskStatuses() throws Exception {
         mockMvc.perform(get("/api/task_statuses").with(token))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreateTaskStatus() throws Exception {
         mockMvc.perform(post("/api/task_statuses")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testTaskStatus))
@@ -92,7 +92,7 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void testShow() throws Exception {
+    public void testGetTaskStatusById() throws Exception {
         testTaskStatus = taskStatusRepository.save(testTaskStatus);
         mockMvc.perform(get("/api/task_statuses/{id}", testTaskStatus.getId()).with(token))
                 .andExpect(status().isOk())
@@ -105,7 +105,7 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdateTaskStatusById() throws Exception {
         testTaskStatus = taskStatusRepository.save(testTaskStatus);
         TaskStatusUpdateDTO taskStatusUpdateDTO = new TaskStatusUpdateDTO(
                 JsonNullable.of(faker.name().firstName()),
@@ -126,7 +126,7 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void destroy() throws Exception {
+    public void deleteTaskStatus() throws Exception {
         testTaskStatus = taskStatusRepository.save(testTaskStatus);
         mockMvc.perform(delete("/api/task_statuses/{id}", testTaskStatus.getId()).with(token))
                 .andExpect(status().isNoContent());

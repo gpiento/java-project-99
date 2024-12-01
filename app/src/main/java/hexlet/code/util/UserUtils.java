@@ -1,5 +1,6 @@
 package hexlet.code.util;
 
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,11 @@ public class UserUtils {
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
+            throw new IllegalStateException("No authenticated user found");
         }
-        return userRepository.findByEmail(authentication.getName())
-                .orElse(null);
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new ResourceNotFoundException("Authenticated user not found"));
     }
 
     public boolean isAuthor(Long id) {

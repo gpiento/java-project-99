@@ -64,7 +64,7 @@ public class LabelControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreateLabel() throws Exception {
         mockMvc.perform(post("/api/labels")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testLabel))
@@ -77,7 +77,7 @@ public class LabelControllerTest {
     }
 
     @Test
-    public void testShow() throws Exception {
+    public void testGetLabelById() throws Exception {
         testLabel = labelRepository.save(testLabel);
         mockMvc.perform(get("/api/labels/{id}", testLabel.getId()).with(token))
                 .andExpect(status().isOk())

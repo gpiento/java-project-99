@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,36 +28,39 @@ public class TaskStatusController {
     private TaskStatusService taskStatusService;
 
     @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<TaskStatusDTO>> index() {
-        List<TaskStatusDTO> taskStatusDTO = taskStatusService.getAll();
-
+    public ResponseEntity<List<TaskStatusDTO>> getAllTaskStatuses() {
+        List<TaskStatusDTO> taskStatusDTO = taskStatusService.getAllTaskStatuses();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(taskStatusDTO.size()))
                 .body(taskStatusDTO);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskStatusDTO show(@PathVariable Long id) {
-        return taskStatusService.getTaskStatusById(id);
+    public ResponseEntity<TaskStatusDTO> getTaskStatusById(@PathVariable Long id) {
+        TaskStatusDTO taskStatusDTO = taskStatusService.getTaskStatusById(id);
+        return ResponseEntity.ok(taskStatusDTO);
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public TaskStatusDTO create(@Valid @RequestBody TaskStatusCreateDTO taskStatusCreateDTO) {
-        return taskStatusService.create(taskStatusCreateDTO);
+    public ResponseEntity<TaskStatusDTO> createTaskStatus(
+            @Valid @RequestBody TaskStatusCreateDTO taskStatusCreateDTO) {
+        TaskStatusDTO taskStatusDTO = taskStatusService.createTaskStatus(taskStatusCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskStatusDTO);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskStatusDTO update(@PathVariable Long id, @Valid @RequestBody TaskStatusUpdateDTO taskStatusUpdateDTO) {
-        return taskStatusService.update(id, taskStatusUpdateDTO);
+    @PreAuthorize("@userUtils.isAuthor(#id)")
+    public ResponseEntity<TaskStatusDTO> updateTaskStatusById(
+            @PathVariable Long id,
+            @Valid @RequestBody TaskStatusUpdateDTO taskStatusUpdateDTO) {
+        TaskStatusDTO taskStatusDTO = taskStatusService.updateTaskStatus(id, taskStatusUpdateDTO);
+        return ResponseEntity.ok(taskStatusDTO);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
+    @PreAuthorize("@userUtils.isAuthor(#id)")
+    public ResponseEntity<Void> deleteTaskStatus(@PathVariable Long id) {
         taskStatusService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

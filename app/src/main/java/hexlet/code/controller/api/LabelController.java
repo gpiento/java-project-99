@@ -7,6 +7,7 @@ import hexlet.code.service.LabelService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,35 +32,36 @@ public class LabelController {
 
     @GetMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<LabelDTO>> getAll() {
-        List<LabelDTO> labelDTOS = labelService.getAll();
-
+    public ResponseEntity<List<LabelDTO>> getAllLabels() {
+        List<LabelDTO> labelDTOS = labelService.getAllLabels();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(labelDTOS.size()))
                 .body(labelDTOS);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public LabelDTO show(@PathVariable Long id) {
-        return labelService.findById(id);
+    public ResponseEntity<LabelDTO> getLabelById(@PathVariable Long id) {
+        LabelDTO labelDTO = labelService.getLabelById(id);
+        return ResponseEntity.ok(labelDTO);
     }
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public LabelDTO create(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
-        return labelService.create(labelCreateDTO);
+    public ResponseEntity<LabelDTO> createLabel(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
+        LabelDTO labelDTO = labelService.createLabel(labelCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(labelDTO);
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public LabelDTO update(@PathVariable Long id, @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
-        return labelService.update(id, labelUpdateDTO);
+    @PreAuthorize("@userUtils.isAuthor(#id)")
+    public ResponseEntity<LabelDTO> update(@PathVariable Long id,
+                                           @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
+        LabelDTO labelDTO = labelService.updateLabel(id, labelUpdateDTO);
+        return ResponseEntity.ok(labelDTO);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @PreAuthorize("@userUtils.isAuthor(#id)")
+    public ResponseEntity<Void> deleteLabel(@PathVariable Long id) {
         labelService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

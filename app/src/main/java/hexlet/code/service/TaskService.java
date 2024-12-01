@@ -31,7 +31,7 @@ public class TaskService {
         this.taskSpecification = taskSpecification;
     }
 
-    public List<TaskDTO> getAll(TaskParamsDTO taskParamsDTO) {
+    public List<TaskDTO> getAllTasks(TaskParamsDTO taskParamsDTO) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
         return taskRepository.findAll(spec).stream().map(taskMapper::map).toList();
     }
@@ -42,14 +42,14 @@ public class TaskService {
         return taskMapper.map(task);
     }
 
-    public TaskDTO create(TaskCreateDTO taskCreateDTO) {
+    public TaskDTO createTask(TaskCreateDTO taskCreateDTO) {
         Task task = taskMapper.map(taskCreateDTO);
         task = taskRepository.save(task);
         LOGGER.info("Task created with id: {}", task.getId());
         return taskMapper.map(task);
     }
 
-    public TaskDTO update(Long id, TaskUpdateDTO taskUpdateDTO) {
+    public TaskDTO updateTaskById(Long id, TaskUpdateDTO taskUpdateDTO) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task with id '%d' not found", id));
         taskMapper.update(taskUpdateDTO, task);

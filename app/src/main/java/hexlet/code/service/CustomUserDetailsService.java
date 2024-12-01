@@ -1,5 +1,6 @@
 package hexlet.code.service;
 
+import hexlet.code.exception.UserAlreadyExistsException;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,15 @@ public class CustomUserDetailsService implements UserDetailsManager {
 
     @Override
     public void createUser(UserDetails userData) {
-        User user = (User) userData;
-        user.setPasswordDigest(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        if (userRepository.findByEmail(userData.getUsername()).isPresent()) {
+            throw new UserAlreadyExistsException("User was already exist");
+        }
+        User newUser = User.builder()
+                .email(userData.getUsername())
+                .passwordDigest(passwordEncoder.encode(userData.getPassword()))
+                .build();
+        newUser.setPasswordDigest(passwordEncoder.encode(newUser.getPassword()));
+        userRepository.save(newUser);
     }
 
     @Override

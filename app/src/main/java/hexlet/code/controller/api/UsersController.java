@@ -3,6 +3,7 @@ package hexlet.code.controller.api;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.exception.UserAlreadyExistsException;
 import hexlet.code.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -46,9 +47,13 @@ public class UsersController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        UserDTO createUser = userService.createUser(userCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        try {
+            UserDTO createUser = userService.createUser(userCreateDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
+        } catch (UserAlreadyExistsException message) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(message.getMessage());
+        }
     }
 
     @PutMapping("/{id}")

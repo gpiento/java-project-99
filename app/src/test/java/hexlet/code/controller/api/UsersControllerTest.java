@@ -115,8 +115,8 @@ public class UsersControllerTest {
         User invalidUser = User.builder()
                 .email("invalid-email")
                 .lastName("Doe")
+                .passwordDigest("qwerty")
                 .build();
-
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidUser))
@@ -132,20 +132,18 @@ public class UsersControllerTest {
                 .lastName("User")
                 .passwordDigest("qwerty")
                 .build());
-
+        existingUser = userRepository.save(existingUser);
         User newUser = User.builder()
                 .email("existing@example.com")
                 .firstName("New")
                 .lastName("User")
+                .passwordDigest("qwerty")
                 .build();
-
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newUser))
                         .with(token))
-                .andExpect(status().isBadRequest());
-
-        userRepository.delete(existingUser);
+                .andExpect(status().isConflict());
     }
 
     @Test

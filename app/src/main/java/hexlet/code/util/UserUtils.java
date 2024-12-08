@@ -23,7 +23,7 @@ public class UserUtils {
                 new ResourceNotFoundException("Authenticated user not found"));
     }
 
-    public boolean isAuthor(Long id) {
+    public boolean isCurrentUser(Long id) {
         String postAuthorEmail = userRepository.findById(id).get().getEmail();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return postAuthorEmail.equals(authentication.getName());

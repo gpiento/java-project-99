@@ -9,13 +9,13 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'io.freefair.lombok' version '8.10.2'
+    id 'io.freefair.lombok' version '8.11'
     id 'com.adarshr.test-logger' version '4.0.0'
     id 'com.github.ben-manes.versions' version '0.51.0'
 
-    id 'org.springframework.boot' version '3.3.5'
+    id 'org.springframework.boot' version '3.4.0'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'io.sentry.jvm.gradle' version '4.13.0'
+    id 'io.sentry.jvm.gradle' version '4.14.1'
 }
 
 group = 'hexlet.code'
@@ -31,20 +31,20 @@ repositories {
 }
 
 ext {
-    springVersion = '6.1.14'
-    springBootVersion = '3.3.5'
-    springSecurityTestVersion = '6.3.4'
-    hibernateCoreVersion = '6.6.2.Final'
+    springVersion = '6.2.0'
+    springBootVersion = '3.4.0'
+    springSecurityTestVersion = '6.4.1'
+    hibernateCoreVersion = '6.6.3.Final'
     mapStructVersion = '1.6.3'
     jacksonDatabindNullableVersion = '0.2.6'
     h2Version = '2.3.232'
     postgresqlVersion = '42.7.4'
     lombokVersion = '1.18.36'
     lombokMapstructBindingVersion = '0.2.0'
-    datafakerVersion = '2.4.1'
-    instancioVersion = '5.0.2'
-    sentryVersion = '7.13.0'
-    jsonUnitVersion = '3.5.0'
+    datafakerVersion = '2.4.2'
+    instancioVersion = '5.2.0'
+    sentryVersion = '7.18.1'
+    jsonUnitVersion = '4.1.0'
     junitVersion = '5.11.3'
     junitPlatformVersion = '1.11.1'
 }
@@ -87,8 +87,9 @@ dependencies {
 //    implementation('io.sentry:sentry-logback') //no version specified
     implementation 'org.slf4j:slf4j-api:2.0.16'
 
-
+    testImplementation("org.assertj:assertj-core:3.26.3")
     testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
+    testImplementation 'org.mockito:mockito-core:5.14.2'
 
 //    testImplementation platform("org.junit:junit-bom:$junitVersion")
 //    testImplementation "org.junit.platform:junit-platform-launcher"
@@ -98,7 +99,7 @@ dependencies {
 //    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
 //    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
     //testImplementation libs.junit.jupiter
     //implementation 'com.google.guava:guava:33.0.0-jre'

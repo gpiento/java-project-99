@@ -3,9 +3,14 @@ package hexlet.code.controller.api;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.exception.UserAlreadyExistsException;
 import hexlet.code.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,32 +25,37 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Tag(name = "Users", description = "Operations with users")
 @RestController
 @RequestMapping("/api/users")
-// TODO add security
-//@Tag(name = "User Management", description = "Operations pertaining to users")
-public class UsersController {
+@AllArgsConstructor
+public class UserController {
 
     private final UserService userService;
 
-    public UsersController(UserService userService) {
-        this.userService = userService;
-    }
-
+    @Operation(summary = "Get all users")
     @GetMapping("")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> usersDTO = userService.getAllUsers();
+        List<UserDTO> userDTOS = userService.getAllUsers();
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(usersDTO.size()))
-                .body(usersDTO);
+                .header("X-Total-Count", String.valueOf(userDTOS.size()))
+                .body(userDTOS);
     }
 
+    @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        UserDTO userDTO = userService.getUserById(id);
-        return ResponseEntity.ok(userDTO);
+        try {
+            UserDTO userDTO = userService.getUserById(id);
+            return ResponseEntity.ok(userDTO);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @Operation(summary = "Create new user")
+    @ApiResponse(responseCode = "201", description = "User created")
+    @ApiResponse(responseCode = "409", description = "User already exists")
     @PostMapping("")
     public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         try {
@@ -56,18 +66,32 @@ public class UsersController {
         }
     }
 
+    @Operation(summary = "Update user")
+    @ApiResponse(responseCode = "200", description = "User updated")
+    @ApiResponse(responseCode = "404", description = "User not found")
     @PutMapping("/{id}")
-    @PreAuthorize("@userUtils.isAuthor(#id)")
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
     public ResponseEntity<UserDTO> updateUserById(@PathVariable Long id,
                                                   @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        UserDTO updateUser = userService.updateUser(id, userUpdateDTO);
-        return ResponseEntity.ok(updateUser);
+        try {
+            UserDTO updatedUser = userService.updateUser(id, userUpdateDTO);
+            return ResponseEntity.ok(updatedUser);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @Operation(summary = "Delete user")
+    @ApiResponse(responseCode = "204", description = "User deleted")
+    @ApiResponse(responseCode = "404", description = "User not found")
     @DeleteMapping("/{id}")
-    @PreAuthorize("@userUtils.isAuthor(#id)")
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        try {
+            userService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

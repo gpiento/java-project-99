@@ -49,7 +49,7 @@ public class TaskStatusController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@userUtils.isAuthor(#id)")
+    @PreAuthorize("@userUtils.currentUser(#id)")
     public ResponseEntity<TaskStatusDTO> updateTaskStatusById(
             @PathVariable Long id,
             @Valid @RequestBody TaskStatusUpdateDTO taskStatusUpdateDTO) {
@@ -58,7 +58,7 @@ public class TaskStatusController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@userUtils.isAuthor(#id)")
+    @PreAuthorize("@userUtils.currentUser(#id)")
     public ResponseEntity<Void> deleteTaskStatus(@PathVariable Long id) {
         taskStatusService.deleteById(id);
         return ResponseEntity.noContent().build();

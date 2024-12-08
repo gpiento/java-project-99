@@ -15,6 +15,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Mapper(
@@ -32,6 +33,8 @@ public abstract class UserMapper {
     private PasswordEncoder passwordEncoder;
 
     public abstract UserDTO map(User user);
+
+    public abstract List<UserDTO> map(List<User> user);
 
     public abstract User map(UserDTO userDTO);
 

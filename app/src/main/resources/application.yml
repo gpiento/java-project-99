@@ -27,11 +27,6 @@ sentry:
   # of transactions for tracing.
   # We recommend adjusting this value in production.
   tracesSampleRate: 1.0
-springdoc:
-  api-doc:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui/index.html
 user:
   email: hexlet@example.com
   password: qwerty

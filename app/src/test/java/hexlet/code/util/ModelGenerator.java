@@ -2,6 +2,8 @@ package hexlet.code.util;
 
 import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelUpdateDTO;
+import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
+import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
 import hexlet.code.model.Label;
@@ -27,6 +29,8 @@ public class ModelGenerator {
     private Model<UserCreateDTO> userCreateDTOModel;
     private Model<UserUpdateDTO> userUpdateDTOModel;
     private Model<TaskStatus> taskStatusModel;
+    private Model<TaskStatusCreateDTO> taskStatusCreateDTOModel;
+    private Model<TaskStatusUpdateDTO> taskStatusUpdateDTOModel;
     private Model<Task> taskModel;
     private Model<Label> labelModel;
     private Model<LabelCreateDTO> labelCreateDTOModel;
@@ -64,14 +68,34 @@ public class ModelGenerator {
 
         taskStatusModel = Instancio.of(TaskStatus.class)
                 .ignore(field(TaskStatus::getId))
-                .supply(field(TaskStatus::getName), () -> faker.text()
-                        .text(3, 7, true))
+                .supply(field(TaskStatus::getName), () -> faker.word().adverb().toLowerCase())
                 .supply(field(TaskStatus::getSlug), () -> faker.lorem()
-                        .sentence(2)
+                        .sentence(1)
+                        .toLowerCase()
+                        .replace(" ", "_")
+                        .replaceAll("[^a-z_\\s]", ""))
+                .ignore(field(TaskStatus::getCreatedAt))
+                .ignore(field(TaskStatus::getTasks))
+                .toModel();
+
+        taskStatusCreateDTOModel = Instancio.of(TaskStatusCreateDTO.class)
+                .supply(field(TaskStatusCreateDTO::getName), () -> faker.text()
+                        .text(3, 7, true))
+                .supply(field(TaskStatusCreateDTO::getSlug), () -> faker.lorem()
+                        .sentence(3)
                         .toLowerCase()
                         .replace(" ", "_")
                         .replace("-", "_"))
-                .ignore(field(TaskStatus::getCreatedAt))
+                .toModel();
+
+        taskStatusUpdateDTOModel = Instancio.of(TaskStatusUpdateDTO.class)
+                .supply(field(TaskStatusUpdateDTO::getName), () -> JsonNullable.of(faker.text()
+                        .text(3, 7, true)))
+                .supply(field(TaskStatusUpdateDTO::getSlug), () -> JsonNullable.of(faker.lorem()
+                        .sentence(3)
+                        .toLowerCase()
+                        .replace(" ", "_")
+                        .replace("-", "_")))
                 .toModel();
 
         taskModel = Instancio.of(Task.class)

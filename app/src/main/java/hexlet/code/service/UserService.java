@@ -9,6 +9,7 @@ import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,16 +17,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -34,8 +30,8 @@ public class UserService {
     }
 
     public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id '%d' not found", id));
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("User with id '%d' not found", id));
         return userMapper.map(user);
     }
 
@@ -43,7 +39,7 @@ public class UserService {
     public UserDTO createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             LOGGER.info("User with email {} already exits", userCreateDTO.getEmail());
-            throw new UserAlreadyExistsException("User with email already exists");
+            throw new UserAlreadyExistsException("User with email '%s' already exists", userCreateDTO.getEmail());
         }
         User user = userMapper.map(userCreateDTO);
         user = userRepository.save(user);
@@ -57,6 +53,7 @@ public class UserService {
                 () -> new ResourceNotFoundException("User with id '%d' not found", id));
         userMapper.updateUser(userUpdateDTO, user);
         LOGGER.info("Updated user with id: {}", id);
+        user = userRepository.save(user);
         return userMapper.map(user);
     }
 

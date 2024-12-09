@@ -3,29 +3,25 @@ package hexlet.code.service;
 import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelDTO;
 import hexlet.code.dto.label.LabelUpdateDTO;
+import hexlet.code.exception.LabelAlreadyExistsException;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.LabelMapper;
 import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class LabelService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final LabelRepository labelRepository;
     private final LabelMapper labelMapper;
-
-    @Autowired
-    public LabelService(LabelRepository labelRepository, LabelMapper labelMapper) {
-        this.labelRepository = labelRepository;
-        this.labelMapper = labelMapper;
-    }
 
     public List<LabelDTO> getAllLabels() {
         return labelRepository.findAll().stream()
@@ -41,6 +37,9 @@ public class LabelService {
 
     @Transactional
     public LabelDTO createLabel(LabelCreateDTO labelCreateDTO) {
+        if (labelRepository.existsByName(labelCreateDTO.getName())) {
+            throw new LabelAlreadyExistsException("Label with name '%s' already exists", labelCreateDTO.getName());
+        }
         Label label = labelMapper.map(labelCreateDTO);
         label = labelRepository.save(label);
         LOGGER.info("Created label with id: {}", label.getId());
@@ -53,6 +52,7 @@ public class LabelService {
                 new ResourceNotFoundException("Label with id '%d' not found", id));
         labelMapper.update(labelUpdateDTO, label);
         LOGGER.info("Updated label with id: {}", label.getId());
+        label = labelRepository.save(label);
         return labelMapper.map(labelRepository.save(label));
     }
 

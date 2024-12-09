@@ -4,8 +4,11 @@ import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
 import hexlet.code.dto.taskstatus.TaskStatusDTO;
 import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
 import hexlet.code.service.TaskStatusService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,10 +25,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/task_statuses")
+@AllArgsConstructor
 public class TaskStatusController {
 
-    @Autowired
-    private TaskStatusService taskStatusService;
+    private final TaskStatusService taskStatusService;
 
     @GetMapping("")
     public ResponseEntity<List<TaskStatusDTO>> getAllTaskStatuses() {
@@ -41,6 +44,8 @@ public class TaskStatusController {
         return ResponseEntity.ok(taskStatusDTO);
     }
 
+    @ApiResponse(responseCode = "201", description = "Сreated",
+            content = @Content(schema = @Schema(implementation = TaskStatusDTO.class)))
     @PostMapping("")
     public ResponseEntity<TaskStatusDTO> createTaskStatus(
             @Valid @RequestBody TaskStatusCreateDTO taskStatusCreateDTO) {
@@ -48,6 +53,7 @@ public class TaskStatusController {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskStatusDTO);
     }
 
+    @ApiResponse(responseCode = "200", description = "OK")
     @PutMapping("/{id}")
     @PreAuthorize("@userUtils.currentUser(#id)")
     public ResponseEntity<TaskStatusDTO> updateTaskStatusById(
@@ -57,6 +63,7 @@ public class TaskStatusController {
         return ResponseEntity.ok(taskStatusDTO);
     }
 
+    @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
     @PreAuthorize("@userUtils.currentUser(#id)")
     public ResponseEntity<Void> deleteTaskStatus(@PathVariable Long id) {

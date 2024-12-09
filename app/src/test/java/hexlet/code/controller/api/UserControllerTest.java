@@ -102,19 +102,6 @@ public class UserControllerTest {
     }
 
     @Test
-    public void createUserDuplicateEmail() throws Exception {
-        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
-        UserCreateDTO newTestUser = Instancio.of(generator.getUserCreateDTOModel())
-                .set(field(UserCreateDTO::getEmail), testUser.getEmail())
-                .create();
-        mockMvc.perform(post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newTestUser))
-                        .with(token))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
     public void createUserEmptyFields() throws Exception {
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)

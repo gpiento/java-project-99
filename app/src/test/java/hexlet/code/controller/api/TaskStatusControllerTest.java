@@ -1,20 +1,14 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.component.DefaultUserProperties;
+import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
 import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
-import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
-import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.util.ModelGenerator;
 import jakarta.transaction.Transactional;
-import net.datafaker.Faker;
 import org.instancio.Instancio;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,10 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class TaskStatusControllerTest {
-
+    private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
     private TaskStatus testTaskStatus;
-    private Task testTask;
-    private JwtRequestPostProcessor token;
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,88 +40,79 @@ public class TaskStatusControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private ModelGenerator modelGenerator;
-    @Autowired
-    private Faker faker;
-    @Autowired
-    private TaskRepository taskRepository;
-    @Autowired
-    private DefaultUserProperties defaultUser;
-
-
-    @BeforeEach
-    public void setUp() {
-        taskStatusRepository.deleteAll();
-        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
-        testTaskStatus = Instancio.of(modelGenerator.getTaskStatusModel()).create();
-        testTask = Instancio.of(modelGenerator.getTaskModel()).create();
-//        testTaskStatus.addTask(testTask);
-    }
-
-    @AfterEach
-    public void tearDown() {
-        taskStatusRepository.deleteAll();
-    }
+    private ModelGenerator generator;
 
     @Test
-    public void testGetAllTaskStatuses() throws Exception {
-        mockMvc.perform(get("/api/task_statuses").with(token))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testCreateTaskStatus() throws Exception {
-        mockMvc.perform(post("/api/task_statuses")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testTaskStatus))
+    public void getAllTaskStatuses() throws Exception {
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        mockMvc.perform(get("/api/task_statuses")
                         .with(token))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
-                .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
-                .andExpect(jsonPath("$.createdAt").exists());
-        taskStatusRepository.delete(testTaskStatus);
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(6)));
     }
 
     @Test
-    public void testGetTaskStatusById() throws Exception {
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        mockMvc.perform(get("/api/task_statuses/{id}", testTaskStatus.getId()).with(token))
+    public void getTaskStatusByIdSuccess() throws Exception {
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        mockMvc.perform(get("/api/task_statuses/{id}", testTaskStatus.getId())
+                        .with(token))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(testTaskStatus.getId()))
                 .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
                 .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
                 .andExpect(jsonPath("$.createdAt").exists());
-        taskStatusRepository.delete(testTaskStatus);
     }
 
     @Test
-    public void testUpdateTaskStatusById() throws Exception {
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        TaskStatusUpdateDTO taskStatusUpdateDTO = new TaskStatusUpdateDTO(
-                JsonNullable.of(faker.name().firstName()),
-                JsonNullable.of(faker.internet().domainWord().toLowerCase().replace("-", "_"))
-        );
+    public void getTaskStatusByIdNotFound() throws Exception {
+        mockMvc.perform(get("/api/task_statuses/{id}", 999999999)
+                        .with(token))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void createTaskStatus() throws Exception {
+        TaskStatusCreateDTO createDTO = Instancio.of(generator.getTaskStatusCreateDTOModel()).create();
+        mockMvc.perform(post("/api/task_statuses")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDTO))
+                        .with(token))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(createDTO.getName()))
+                .andExpect(jsonPath("$.slug").value(createDTO.getSlug()))
+                .andExpect(jsonPath("$.createdAt").exists());
+    }
+
+    @Test
+    public void updateTaskStatusById() throws Exception {
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        TaskStatusUpdateDTO updateDTO = Instancio.of(generator.getTaskStatusUpdateDTOModel()).create();
         mockMvc.perform(put("/api/task_statuses/{id}", testTaskStatus.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(taskStatusUpdateDTO))
+                        .content(objectMapper.writeValueAsString(updateDTO))
                         .with(token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testTaskStatus.getId()))
-                .andExpect(jsonPath("$.name").value(taskStatusUpdateDTO.getName().get()))
-                .andExpect(jsonPath("$.slug").value(taskStatusUpdateDTO.getSlug().get()))
-                .andExpect(jsonPath("$.name").value(testTaskStatus.getName()))
-                .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()))
+                .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
+                .andExpect(jsonPath("$.slug").value(updateDTO.getSlug().get()))
                 .andExpect(jsonPath("$.createdAt").exists());
-        taskStatusRepository.delete(testTaskStatus);
     }
 
     @Test
     public void deleteTaskStatus() throws Exception {
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        mockMvc.perform(delete("/api/task_statuses/{id}", testTaskStatus.getId()).with(token))
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        mockMvc.perform(get("/api/task_statuses/{id}", testTaskStatus.getId())
+                        .with(token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.slug").value(testTaskStatus.getSlug()));
+        mockMvc.perform(delete("/api/task_statuses/{id}", testTaskStatus.getId())
+                        .with(token))
                 .andExpect(status().isNoContent());
-        assertFalse(taskStatusRepository.existsById(testTaskStatus.getId()));
+        mockMvc.perform(get("/api/task_statuses/{id}", testTaskStatus.getId())
+                        .with(token))
+                .andExpect(status().isNotFound());
     }
 }

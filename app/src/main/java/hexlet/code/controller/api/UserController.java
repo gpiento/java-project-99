@@ -3,12 +3,10 @@ package hexlet.code.controller.api;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
-import hexlet.code.exception.ResourceNotFoundException;
-import hexlet.code.exception.UserAlreadyExistsException;
 import hexlet.code.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Tag(name = "Users", description = "Operations with users")
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
@@ -33,7 +30,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @Operation(summary = "Get all users")
     @GetMapping("")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userDTOS = userService.getAllUsers();
@@ -42,56 +38,35 @@ public class UserController {
                 .body(userDTOS);
     }
 
-    @Operation(summary = "Get user by ID")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        try {
-            UserDTO userDTO = userService.getUserById(id);
-            return ResponseEntity.ok(userDTO);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        UserDTO userDTO = userService.getUserById(id);
+        return ResponseEntity.ok(userDTO);
     }
 
-    @Operation(summary = "Create new user")
-    @ApiResponse(responseCode = "201", description = "User created")
-    @ApiResponse(responseCode = "409", description = "User already exists")
+    @ApiResponse(responseCode = "201", description = "Сreated",
+            content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping("")
-    public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        try {
-            UserDTO createUser = userService.createUser(userCreateDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
-        } catch (UserAlreadyExistsException message) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(message.getMessage());
-        }
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        UserDTO createUser = userService.createUser(userCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
-    @Operation(summary = "Update user")
-    @ApiResponse(responseCode = "200", description = "User updated")
-    @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "200", description = "OK")
     @PutMapping("/{id}")
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
-    public ResponseEntity<UserDTO> updateUserById(@PathVariable Long id,
-                                                  @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        try {
-            UserDTO updatedUser = userService.updateUser(id, userUpdateDTO);
-            return ResponseEntity.ok(updatedUser);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<UserDTO> updateUserById(
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+        UserDTO updatedUser = userService.updateUser(id, userUpdateDTO);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    @Operation(summary = "Delete user")
-    @ApiResponse(responseCode = "204", description = "User deleted")
-    @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

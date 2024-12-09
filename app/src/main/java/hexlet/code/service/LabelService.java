@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class LabelService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelService.class);
     private final LabelRepository labelRepository;
     private final LabelMapper labelMapper;
 

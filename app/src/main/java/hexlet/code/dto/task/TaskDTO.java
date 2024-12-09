@@ -25,7 +25,7 @@ public class TaskDTO {
     @JsonProperty("assignee_id")
     private Long assignee;
 
-    private Set<Long> labelIds;
+    private Set<Long> taskLabelIds;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate createdAt;

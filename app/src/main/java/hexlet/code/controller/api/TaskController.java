@@ -4,14 +4,15 @@ import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
-import hexlet.code.mapper.TaskMapper;
-import hexlet.code.repository.TaskRepository;
 import hexlet.code.service.TaskService;
-import hexlet.code.specification.TaskSpecification;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,59 +20,54 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
+@AllArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
 
-    @Autowired
-    private TaskSpecification taskSpecification;
-    @Autowired
-    private TaskRepository taskRepository;
-    @Autowired
-    private TaskMapper taskMapper;
-
-    public TaskController(TaskService taskService) {
-        this.taskService = taskService;
-    }
-
     @GetMapping("")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<TaskDTO>> index(TaskParamsDTO taskParamsDTO) {
+    public ResponseEntity<List<TaskDTO>> getAllTasks(TaskParamsDTO taskParamsDTO) {
         List<TaskDTO> taskDTOS = taskService.getAllTasks(taskParamsDTO);
-        return ResponseEntity
-                .ok()
+        return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(taskDTOS.size()))
                 .body(taskDTOS);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskDTO show(@PathVariable Long id) {
-        return taskService.getTaskById(id);
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
+        TaskDTO taskDTO = taskService.getTaskById(id);
+        return ResponseEntity.ok(taskDTO);
     }
+
+    @ApiResponse(responseCode = "201", description = "Сreated",
+            content = @Content(schema = @Schema(implementation = TaskDTO.class)))
 
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
-    public TaskDTO create(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
-        return taskService.createTask(taskCreateDTO);
+    public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
+        TaskDTO taskDTO = taskService.create(taskCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskDTO);
     }
 
+    @ApiResponse(responseCode = "200", description = "OK")
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public TaskDTO update(@PathVariable Long id, @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
-        return taskService.updateTaskById(id, taskUpdateDTO);
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
+    public ResponseEntity<TaskDTO> updateTaskById(@PathVariable Long id,
+                                                  @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
+        TaskDTO taskDTO = taskService.updateById(id, taskUpdateDTO);
+        return ResponseEntity.ok(taskDTO);
     }
 
+    @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable Long id) {
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
+    public ResponseEntity<Void> destroy(@PathVariable Long id) {
         taskService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

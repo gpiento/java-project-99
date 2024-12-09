@@ -48,7 +48,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
+    public UserDTO updateById(Long id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User with id '%d' not found", id));
         userMapper.updateUser(userUpdateDTO, user);

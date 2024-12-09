@@ -32,6 +32,7 @@ public class Label implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -39,6 +40,7 @@ public class Label implements BaseEntity {
     private String name;
 
     @CreatedDate
+    @Column
     private LocalDate createdAt;
 
     public Label(String name) {

@@ -18,15 +18,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 import java.util.function.Consumer;
 
-@Mapper(
-        uses = {
-                JsonNullableMapper.class,
-                ReferenceMapper.class,
-                TaskMapper.class},
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = {JsonNullableMapper.class})
 public abstract class UserMapper {
 
     @Autowired

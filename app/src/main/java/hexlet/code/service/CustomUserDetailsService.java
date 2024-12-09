@@ -32,10 +32,9 @@ public class CustomUserDetailsService implements UserDetailsManager {
         if (userRepository.findByEmail(userData.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException("User was already exist");
         }
-        User newUser = User.builder()
-                .email(userData.getUsername())
-                .passwordDigest(passwordEncoder.encode(userData.getPassword()))
-                .build();
+        User newUser = new User();
+        newUser.setEmail(userData.getUsername());
+        newUser.setPasswordDigest(passwordEncoder.encode(userData.getPassword()));
         userRepository.save(newUser);
     }
 

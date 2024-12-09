@@ -16,15 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(
-        uses = {
-                JsonNullableMapper.class,
-                ReferenceMapper.class,
-                TaskMapper.class},
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        uses = {JsonNullableMapper.class,
+                ReferenceMapper.class})
 public abstract class LabelMapper {
 
     @Autowired

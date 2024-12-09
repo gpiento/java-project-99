@@ -20,9 +20,10 @@ public class UserCreateDTO {
     private String email;
 
     private String firstName;
+
     private String lastName;
 
     @NotBlank
-    @Size(min = 3)
+    @Size(min = 3, max = 100)
     private String password;
 }

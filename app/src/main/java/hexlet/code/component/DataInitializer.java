@@ -37,19 +37,18 @@ public class DataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         if (!userRepository.existsByEmail(defaultUser.getEmail())) {
-            User user = User.builder()
-                    .email(defaultUser.getEmail())
-                    .passwordDigest(defaultUser.getPassword())
-                    .build();
+            User user = new User();
+            user.setEmail(defaultUser.getEmail());
+            user.setPasswordDigest(defaultUser.getPassword());
             customUserDetailsService.createUser(user);
         }
 
         Stream.of(
-                        TaskStatus.builder().name("Draft").slug("draft").build(),
-                        TaskStatus.builder().name("To Review").slug("to_review").build(),
-                        TaskStatus.builder().name("To Be Fixed").slug("to_be_fixed").build(),
-                        TaskStatus.builder().name("To Publish").slug("to_publish").build(),
-                        TaskStatus.builder().name("Published").slug("published").build()
+                        new TaskStatus("Draft", "draft"),
+                        new TaskStatus("To Review", "to_review"),
+                        new TaskStatus("To Be Fixed", "to_be_fixed"),
+                        new TaskStatus("To Publish", "to_publish"),
+                        new TaskStatus("Published", "published")
                 )
                 .filter(taskStatus -> !taskStatusRepository.existsBySlug(taskStatus.getSlug()))
                 .forEach(taskStatusRepository::save);

@@ -13,44 +13,33 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(
-        uses = {JsonNullableMapper.class,
-                ReferenceMapper.class,
-                LabelMapper.class,
-                TaskStatusMapper.class,
-                UserMapper.class},
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        componentModel = MappingConstants.ComponentModel.SPRING,
-        unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+        uses = {JsonNullableMapper.class})
 public abstract class TaskMapper {
-
-    @Mapping(target = "name", source = "title")
-    @Mapping(target = "description", source = "content")
-    @Mapping(target = "taskStatus", source = "status")
-    @Mapping(target = "assignee.id", source = "assignee")
-    @Mapping(target = "labels", source = "labelIds")
-    public abstract Task map(TaskDTO dto);
 
     @Mapping(target = "title", source = "name")
     @Mapping(target = "content", source = "description")
-    @Mapping(target = "status", source = "taskStatus.slug")
-    @Mapping(target = "assignee", source = "assignee.id")
-    @Mapping(target = "labelIds", source = "labels")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "assignee", ignore = true)
+    @Mapping(target = "taskLabelIds", ignore = true)
     public abstract TaskDTO map(Task model);
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "taskStatus", source = "status")
-    @Mapping(target = "assignee.id", source = "assigneeId")
-    @Mapping(target = "labels", source = "taskLabelIds")
+    @Mapping(target = "taskStatus", ignore = true)
+    @Mapping(target = "assignee", ignore = true)
+    @Mapping(target = "labels", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract Task map(TaskCreateDTO dto);
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "taskStatus", source = "status")
-    @Mapping(target = "labels", source = "labelIds")
-    @Mapping(target = "assignee", source = "assigneeId")
+    @Mapping(target = "taskStatus", ignore = true)
+    @Mapping(target = "labels", ignore = true)
+    @Mapping(target = "assignee", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
 
     public abstract List<TaskDTO> map(List<Task> modelList);

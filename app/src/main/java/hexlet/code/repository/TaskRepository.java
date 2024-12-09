@@ -18,4 +18,6 @@ public interface TaskRepository extends
     List<Task> findAllTasks();
 
     Optional<Task> findByName(String name);
+
+    boolean existsByName(String name);
 }

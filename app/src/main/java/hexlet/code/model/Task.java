@@ -70,6 +70,7 @@ public class Task implements BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "label_id"))
     private Set<Label> labels = new LinkedHashSet<>();
 
+    @Column
     @CreatedDate
     private LocalDate createdAt;
 }

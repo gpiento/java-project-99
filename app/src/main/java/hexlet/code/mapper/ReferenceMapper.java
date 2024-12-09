@@ -7,9 +7,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.TargetType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(
-        componentModel = MappingConstants.ComponentModel.SPRING
-)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class ReferenceMapper {
     @Autowired
     private EntityManager entityManager;

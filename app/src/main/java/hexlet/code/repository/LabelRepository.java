@@ -12,4 +12,6 @@ public interface LabelRepository extends JpaRepository<Label, Long> {
     Optional<Label> findByName(String name);
 
     boolean existsByName(String slug);
+
+    Iterable<Label> findByIdIn(Iterable<Long> ids);
 }

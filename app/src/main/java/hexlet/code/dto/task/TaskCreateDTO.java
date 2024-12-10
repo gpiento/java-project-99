@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.util.Set;
 
@@ -16,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class TaskCreateDTO {
 
-    private Integer index;
+    private JsonNullable<Integer> index;
 
     @Size(min = 1)
     @NotBlank
@@ -24,10 +25,10 @@ public class TaskCreateDTO {
 
     private String content;
 
-    private String status;
+    private JsonNullable<String> status;
 
     @JsonProperty("assignee_id")
-    private Long assigneeId;
+    private JsonNullable<Long> assigneeId;
 
-    private Set<Long> taskLabelIds;
+    private JsonNullable<Set<Long>> taskLabelIds;
 }

@@ -16,9 +16,10 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
+import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,16 @@ public abstract class TaskMapper {
     @Named("labelsFromIds")
     Set<Label> labelsFromIds(Set<Long> labels) {
         return labelRepository.findAllById(labels).stream()
-                .collect(HashSet::new, Set::add, Set::addAll);
+                .collect(LinkedHashSet::new, Set::add, Set::addAll);
+    }
+
+    @Named("idsFromLabels")
+    Set<Label> idsFromLabels(JsonNullable<Set<Long>> ids) {
+        if (ids.isPresent()) {
+            return labelRepository.findAllById(ids.get()).stream()
+                    .collect(LinkedHashSet::new, Set::add, Set::addAll);
+        }
+        return null;
     }
 
     @Named("taskStatusFromSlug")
@@ -62,7 +72,7 @@ public abstract class TaskMapper {
     @Mapping(target = "description", source = "content")
     @Mapping(target = "taskStatus", source = "status", qualifiedByName = "taskStatusFromSlug")
     @Mapping(target = "assignee.id", source = "assigneeId")
-    @Mapping(target = "labels", source = "taskLabelIds")
+    @Mapping(target = "labels", source = "taskLabelIds", qualifiedByName = "idsFromLabels")
     public abstract Task map(TaskCreateDTO dto);
 
     @Mapping(target = "name", source = "title")

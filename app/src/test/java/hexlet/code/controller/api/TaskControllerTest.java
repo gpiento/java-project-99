@@ -87,11 +87,11 @@ public class TaskControllerTest {
         testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
         testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
         testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
-        taskCreate.setAssigneeId(testUser.getId());
-        taskCreate.setStatus(testTaskStatus.getSlug());
-        taskCreate.setTaskLabelIds(new HashSet<>() {{
+        taskCreate.setAssigneeId(JsonNullable.of(testUser.getId()));
+        taskCreate.setStatus(JsonNullable.of(testTaskStatus.getSlug()));
+        taskCreate.setTaskLabelIds(JsonNullable.of(new HashSet<>() {{
             add(testLabel.getId());
-        }});
+        }}));
 
         mockMvc.perform(post("/api/tasks")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,7 +100,7 @@ public class TaskControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.index").value(taskCreate.getIndex()))
+                .andExpect(jsonPath("$.index").value(taskCreate.getIndex().get()))
                 .andExpect(jsonPath("$.createdAt").exists())
                 .andExpect(jsonPath("$.assignee_id").value(testUser.getId()))
                 .andExpect(jsonPath("$.title").value(taskCreate.getTitle()))

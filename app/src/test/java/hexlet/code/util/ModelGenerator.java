@@ -113,7 +113,7 @@ public class ModelGenerator {
 
         taskCreateDTOModel = Instancio.of(TaskCreateDTO.class)
                 .supply(field(TaskCreateDTO::getTitle), () -> faker.text().text(3, 7))
-                .supply(field(TaskCreateDTO::getIndex), () -> faker.number().numberBetween(1, 100))
+                .supply(field(TaskCreateDTO::getIndex), () -> JsonNullable.of(faker.number().numberBetween(1, 100)))
                 .supply(field(TaskCreateDTO::getContent), () -> faker.text().text(25))
                 .ignore(field(TaskCreateDTO::getStatus))
                 .ignore(field(TaskCreateDTO::getAssigneeId))

@@ -57,8 +57,6 @@ public class TaskControllerTest {
     @Autowired
     private TaskRepository taskRepository;
     @Autowired
-    private TaskMapper taskMapper;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private TaskStatusRepository taskStatusRepository;
@@ -67,7 +65,16 @@ public class TaskControllerTest {
 
     @Test
     public void getAllTasks() throws Exception {
-        testTask = taskRepository.save(Instancio.of(generator.getTaskModel()).create());
+        testTask = Instancio.of(generator.getTaskModel()).create();
+        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
+        testTask.setAssignee(testUser);
+        testTask.setTaskStatus(testTaskStatus);
+        testTask.setLabels(new HashSet<>() {{
+            add(testLabel);
+        }});
+        testTask = taskRepository.save(testTask);
         mockMvc.perform(get("/api/tasks")
                         .with(token))
                 .andExpect(status().isOk())
@@ -104,13 +111,26 @@ public class TaskControllerTest {
 
     @Test
     public void getTaskById() throws Exception {
+        testTask = Instancio.of(generator.getTaskModel()).create();
+        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
+        testTask.setAssignee(testUser);
+        testTask.setTaskStatus(testTaskStatus);
+        testTask.setLabels(new HashSet<>() {{
+            add(testLabel);
+        }});
         testTask = taskRepository.save(testTask);
         mockMvc.perform(get("/api/tasks/{id}", testTask.getId())
                         .with(token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testTask.getId()))
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.index").value(testTask.getIndex()))
                 .andExpect(jsonPath("$.title").value(testTask.getName()))
                 .andExpect(jsonPath("$.content").value(testTask.getDescription()))
+                .andExpect(jsonPath("$.assignee_id").value(testTask.getAssignee().getId()))
+                .andExpect(jsonPath("$.status").value(testTask.getTaskStatus().getSlug()))
+                .andExpect(jsonPath("$.taskLabelIds").exists())
                 .andExpect(jsonPath("$.createdAt").exists());
     }
 
@@ -156,14 +176,16 @@ public class TaskControllerTest {
             add(testLabel);
         }});
         testTask = taskRepository.save(testTask);
+
+        mockMvc.perform(get("/api/tasks/{id}", testTask.getId())
+                        .with(token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value(testTask.getName()));
         mockMvc.perform(delete("/api/tasks/{id}", testTask.getId())
                         .with(token))
-                .andExpect(status().isNoContent())
-                .andExpect(jsonPath("$.id").value(testTask.getId()))
-                .andExpect(jsonPath("$.title").value(testTask.getName()))
-                .andExpect(jsonPath("$.content").value(testTask.getDescription()))
-                .andExpect(jsonPath("$.status").value(testTaskStatus.getSlug()))
-                .andExpect(jsonPath("$.assignee_id").value(testUser.getId()))
-                .andExpect(jsonPath("$.createdAt").exists());
+                .andExpect(status().isNoContent());
+        mockMvc.perform(get("/api/tasks/{id}", testTask.getId())
+                        .with(token))
+                .andExpect(status().isNotFound());
     }
 }

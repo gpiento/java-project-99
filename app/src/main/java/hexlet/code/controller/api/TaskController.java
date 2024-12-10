@@ -47,7 +47,6 @@ public class TaskController {
 
     @ApiResponse(responseCode = "201", description = "Сreated",
             content = @Content(schema = @Schema(implementation = TaskDTO.class)))
-
     @PostMapping("")
     public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
         TaskDTO taskDTO = taskService.create(taskCreateDTO);

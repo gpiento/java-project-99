@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface LabelRepository extends JpaRepository<Label, Long> {
@@ -13,5 +14,5 @@ public interface LabelRepository extends JpaRepository<Label, Long> {
 
     boolean existsByName(String slug);
 
-    Iterable<Label> findByIdIn(Iterable<Long> ids);
+    Set<Label> findAllByIdIn(Set<Long> ids);
 }

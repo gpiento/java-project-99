@@ -46,7 +46,12 @@ public class TaskService {
     public TaskDTO getTaskById(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task with id '%d' not found", id));
-        return taskMapper.map(task);
+        TaskDTO taskDTO = taskMapper.map(task);
+        taskDTO.setId(task.getId());
+        taskDTO.setStatus(task.getTaskStatus().getSlug());
+        taskDTO.setAssignee(task.getAssignee().getId());
+        taskDTO.setTaskLabelIds(task.getLabels().stream().map(Label::getId).collect(Collectors.toSet()));
+        return taskDTO;
     }
 
     @Transactional
@@ -74,8 +79,19 @@ public class TaskService {
                 new ResourceNotFoundException("Task with id '%d' not found", id));
         taskMapper.update(taskUpdateDTO, task);
         LOGGER.info("Updated task with id: {}", id);
+        if (taskUpdateDTO.getStatus().isPresent()) {
+            task.setTaskStatus(taskStatusRepository.findBySlug(taskUpdateDTO.getStatus().get()).orElseThrow(() ->
+                    new ResourceNotFoundException("Task status '%s' not found", taskUpdateDTO.getStatus().get())));
+        }
+        if (taskUpdateDTO.getAssigneeId().isPresent()) {
+            task.setAssignee(userRepository.findById(taskUpdateDTO.getAssigneeId().get()).orElseThrow(() ->
+                    new ResourceNotFoundException("User with id '%d' not found", taskUpdateDTO.getAssigneeId())));
+        }
+        if (taskUpdateDTO.getTaskLabelIds().isPresent()) {
+            task.setLabels(labelRepository.findAllByIdIn(taskUpdateDTO.getTaskLabelIds().get()));
+        }
         task = taskRepository.save(task);
-        return taskMapper.map(task);
+        return getTaskById(task.getId());
     }
 
     @Transactional

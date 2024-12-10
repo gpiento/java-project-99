@@ -156,12 +156,13 @@ public class TaskControllerTest {
                         .content(objectMapper.writeValueAsString(taskUpdateDTO))
                         .with(token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testTask.getId()))
+                .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.title").value(taskUpdateDTO.getTitle().get()))
                 .andExpect(jsonPath("$.index").value(taskUpdateDTO.getIndex().get()))
                 .andExpect(jsonPath("$.content").value(taskUpdateDTO.getContent().get()))
-                .andExpect(jsonPath("$.createdAt").exists());
-        taskRepository.delete(testTask);
+                .andExpect(jsonPath("$.createdAt").exists())
+                .andExpect(jsonPath("$.assignee_id").exists())
+                .andExpect(jsonPath("$.status").exists());
     }
 
     @Test

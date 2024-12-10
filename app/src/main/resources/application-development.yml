@@ -1,9 +1,6 @@
 spring:
   datasource:
     url: "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;AUTO_RECONNECT=TRUE;DB_CLOSE_ON_EXIT=TRUE;TRACE_LEVEL_FILE=3"
-    #    url: "jdbc:h2:file:./development_H2.db;MODE=PostgreSQL;AUTO_RECONNECT=TRUE;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH"
-    #url: "jdbc:h2:file:./H2-db;MODE=PostgreSQL;AUTO_SERVER=TRUE;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH"
-    #    url: "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;AUTO_RECONNECT=TRUE;DB_CLOSE_ON_EXIT=FALSE;DEFAULT_NULL_ORDERING=HIGH"
     username: sa
     password:
     driver-class-name: org.h2.Driver

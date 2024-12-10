@@ -42,14 +42,12 @@ public abstract class UserMapper {
     @BeforeMapping
     public void encryptPassword(UserCreateDTO userCreateDTO) {
         String password = userCreateDTO.getPassword();
-        if (password != null) {
-            userCreateDTO.setPassword(passwordEncoder.encode(password));
-        }
+        userCreateDTO.setPassword(passwordEncoder.encode(password));
     }
 
     @BeforeMapping
     public void encryptPassword(UserUpdateDTO userUpdateDTO, @MappingTarget User user) {
-        if (userUpdateDTO.getPassword().isPresent() && userUpdateDTO.getPassword() != null) {
+        if (userUpdateDTO.getPassword() != null && userUpdateDTO.getPassword().isPresent()) {
             String password = userUpdateDTO.getPassword().get();
             user.setPasswordDigest(passwordEncoder.encode(password));
         }

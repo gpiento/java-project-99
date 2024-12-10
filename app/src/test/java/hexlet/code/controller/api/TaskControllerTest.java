@@ -3,7 +3,6 @@ package hexlet.code.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
-import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Label;
 import hexlet.code.model.Task;
 import hexlet.code.model.TaskStatus;
@@ -135,10 +134,11 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void updateTaskByIdTask() throws Exception {
-        testUser = userRepository.save(testUser);
-        testTaskStatus = taskStatusRepository.save(testTaskStatus);
-        testLabel = labelRepository.save(testLabel);
+    public void updateTaskById() throws Exception {
+        testTask = Instancio.of(generator.getTaskModel()).create();
+        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testTaskStatus = taskStatusRepository.save(Instancio.of(generator.getTaskStatusModel()).create());
+        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
         testTask.setAssignee(testUser);
         testTask.setTaskStatus(testTaskStatus);
         testTask.setLabels(new HashSet<>() {{

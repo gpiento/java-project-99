@@ -1,12 +1,15 @@
 package hexlet.code.component;
 
-import hexlet.code.model.Label;
-import hexlet.code.model.TaskStatus;
+import hexlet.code.dto.label.LabelCreateDTO;
+import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
 import hexlet.code.model.User;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.CustomUserDetailsService;
+import hexlet.code.service.LabelService;
+import hexlet.code.service.TaskStatusService;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Stream;
 
 @Component
+@AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -21,18 +25,8 @@ public class DataInitializer implements ApplicationRunner {
     private final LabelRepository labelRepository;
     private final UserRepository userRepository;
     private final DefaultUserProperties defaultUser;
-
-    public DataInitializer(CustomUserDetailsService customUserDetailsService,
-                           TaskStatusRepository taskStatusRepository,
-                           LabelRepository labelRepository,
-                           UserRepository userRepository,
-                           DefaultUserProperties defaultUser) {
-        this.customUserDetailsService = customUserDetailsService;
-        this.taskStatusRepository = taskStatusRepository;
-        this.labelRepository = labelRepository;
-        this.userRepository = userRepository;
-        this.defaultUser = defaultUser;
-    }
+    private final TaskStatusService taskStatusService;
+    private final LabelService labelService;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -44,18 +38,18 @@ public class DataInitializer implements ApplicationRunner {
         }
 
         Stream.of(
-                        new TaskStatus("Draft", "draft"),
-                        new TaskStatus("To Review", "to_review"),
-                        new TaskStatus("To Be Fixed", "to_be_fixed"),
-                        new TaskStatus("To Publish", "to_publish"),
-                        new TaskStatus("Published", "published")
+                        new TaskStatusCreateDTO("Draft", "draft"),
+                        new TaskStatusCreateDTO("To Review", "to_review"),
+                        new TaskStatusCreateDTO("To Be Fixed", "to_be_fixed"),
+                        new TaskStatusCreateDTO("To Publish", "to_publish"),
+                        new TaskStatusCreateDTO("Published", "published")
                 )
                 .filter(taskStatus -> !taskStatusRepository.existsBySlug(taskStatus.getSlug()))
-                .forEach(taskStatusRepository::save);
+                .forEach(taskStatusService::createTaskStatus);
 
         Stream.of("bug", "feature")
-                .map(Label::new)
+                .map(LabelCreateDTO::new)
                 .filter(label -> !labelRepository.existsByName(label.getName()))
-                .forEach(labelRepository::save);
+                .forEach(labelService::createLabel);
     }
 }

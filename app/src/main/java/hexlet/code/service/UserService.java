@@ -51,7 +51,7 @@ public class UserService {
     public UserDTO updateById(Long id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("User with id '%d' not found", id));
-        userMapper.updateUser(userUpdateDTO, user);
+        userMapper.update(userUpdateDTO, user);
         LOGGER.info("Updated user with id: {}", id);
         user = userRepository.save(user);
         return userMapper.map(user);

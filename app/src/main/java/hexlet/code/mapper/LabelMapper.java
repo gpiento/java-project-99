@@ -12,7 +12,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,6 +37,6 @@ public abstract class LabelMapper {
     }
 
     public Set<Label> toEntity(Set<Long> listId) {
-        return new HashSet<>(labelRepository.findAllById(listId));
+        return new LinkedHashSet<>(labelRepository.findAllById(listId));
     }
 }

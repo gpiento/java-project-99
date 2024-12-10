@@ -5,8 +5,8 @@ import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.mapper.LabelMapper;
 import hexlet.code.mapper.TaskMapper;
-import hexlet.code.model.Label;
 import hexlet.code.model.Task;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
@@ -20,10 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +32,7 @@ public class TaskService {
     private final UserRepository userRepository;
     private final TaskStatusRepository taskStatusRepository;
     private final LabelRepository labelRepository;
+    private final LabelMapper labelMapper;
 
     public List<TaskDTO> getAllTasks(TaskParamsDTO taskParamsDTO) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
@@ -46,31 +44,15 @@ public class TaskService {
     public TaskDTO getTaskById(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task with id '%d' not found", id));
-        TaskDTO taskDTO = taskMapper.map(task);
-        taskDTO.setId(task.getId());
-        taskDTO.setStatus(task.getTaskStatus().getSlug());
-        taskDTO.setAssignee(task.getAssignee().getId());
-        taskDTO.setTaskLabelIds(task.getLabels().stream().map(Label::getId).collect(Collectors.toSet()));
-        return taskDTO;
+        return taskMapper.map(task);
     }
 
     @Transactional
     public TaskDTO create(TaskCreateDTO taskCreateDTO) {
         Task task = taskMapper.map(taskCreateDTO);
-        task.setAssignee(userRepository.findById(taskCreateDTO.getAssigneeId()).orElseThrow(() ->
-                new ResourceNotFoundException("User with id '%d' not found", taskCreateDTO.getAssigneeId())));
-        task.setTaskStatus(taskStatusRepository.findBySlug(taskCreateDTO.getStatus()).orElseThrow(() ->
-                new ResourceNotFoundException("Task status '%s' not found", taskCreateDTO.getStatus())));
-        task.setLabels(labelRepository.findAllById(taskCreateDTO.getTaskLabelIds()).stream()
-                .collect(HashSet::new, Set::add, Set::addAll));
         task = taskRepository.save(task);
         LOGGER.info("Task created with id: {}", task.getId());
-        TaskDTO taskDTO = taskMapper.map(task);
-        taskDTO.setId(task.getId());
-        taskDTO.setStatus(task.getTaskStatus().getSlug());
-        taskDTO.setAssignee(task.getAssignee().getId());
-        taskDTO.setTaskLabelIds(task.getLabels().stream().map(Label::getId).collect(Collectors.toSet()));
-        return taskDTO;
+        return taskMapper.map(task);
     }
 
     @Transactional
@@ -78,20 +60,9 @@ public class TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task with id '%d' not found", id));
         taskMapper.update(taskUpdateDTO, task);
-        LOGGER.info("Updated task with id: {}", id);
-        if (taskUpdateDTO.getStatus().isPresent()) {
-            task.setTaskStatus(taskStatusRepository.findBySlug(taskUpdateDTO.getStatus().get()).orElseThrow(() ->
-                    new ResourceNotFoundException("Task status '%s' not found", taskUpdateDTO.getStatus().get())));
-        }
-        if (taskUpdateDTO.getAssigneeId().isPresent()) {
-            task.setAssignee(userRepository.findById(taskUpdateDTO.getAssigneeId().get()).orElseThrow(() ->
-                    new ResourceNotFoundException("User with id '%d' not found", taskUpdateDTO.getAssigneeId())));
-        }
-        if (taskUpdateDTO.getTaskLabelIds().isPresent()) {
-            task.setLabels(labelRepository.findAllByIdIn(taskUpdateDTO.getTaskLabelIds().get()));
-        }
         task = taskRepository.save(task);
-        return getTaskById(task.getId());
+        LOGGER.info("Updated task with id: {}", id);
+        return taskMapper.map(task);
     }
 
     @Transactional

@@ -11,17 +11,17 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
-import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
-import java.util.function.Consumer;
 
-@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+@Mapper(
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = {JsonNullableMapper.class})
+        uses = {JsonNullableMapper.class}
+)
 public abstract class UserMapper {
 
     @Autowired
@@ -47,16 +47,11 @@ public abstract class UserMapper {
         }
     }
 
-    public void updateUser(UserUpdateDTO userUpdateDTO, @MappingTarget User user) {
-        updateField(userUpdateDTO.getFirstName(), user::setFirstName);
-        updateField(userUpdateDTO.getLastName(), user::setLastName);
-        updateField(userUpdateDTO.getEmail(), user::setEmail);
-        updateField(userUpdateDTO.getPassword(), password -> user.setPasswordDigest(passwordEncoder.encode(password)));
-    }
-
-    private <T> void updateField(JsonNullable<T> newValue, Consumer<T> setter) {
-        if (newValue != null && newValue.isPresent()) {
-            setter.accept(newValue.get());
+    @BeforeMapping
+    public void encryptPassword(UserUpdateDTO userUpdateDTO, @MappingTarget User user) {
+        if (userUpdateDTO.getPassword().isPresent() && userUpdateDTO.getPassword() != null) {
+            String password = userUpdateDTO.getPassword().get();
+            user.setPasswordDigest(passwordEncoder.encode(password));
         }
     }
 }

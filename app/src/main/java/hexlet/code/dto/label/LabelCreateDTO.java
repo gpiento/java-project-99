@@ -1,6 +1,5 @@
 package hexlet.code.dto.label;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LabelCreateDTO {
 
-    @NotBlank
     @Size(min = 3, max = 1000)
     private String name;
 }

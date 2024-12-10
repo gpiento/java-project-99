@@ -2,12 +2,23 @@ package hexlet.code.dto.task;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Set;
 
+@JsonPropertyOrder({
+        "id",
+        "taskLabelIds",
+        "index",
+        "createdAt",
+        "assignee",
+        "title",
+        "content",
+        "status"
+})
 @Getter
 @Setter
 public class TaskDTO {

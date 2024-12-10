@@ -38,10 +38,8 @@ public class Task implements BaseEntity {
     @Size(min = 1)
     private String name;
 
-    @Column
     private Integer index;
 
-    @Column
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)

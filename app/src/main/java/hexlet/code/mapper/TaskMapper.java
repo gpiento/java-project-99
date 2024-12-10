@@ -48,7 +48,7 @@ public abstract class TaskMapper {
 
     @Named("idsFromLabels")
     Set<Label> idsFromLabels(JsonNullable<Set<Long>> ids) {
-        if (ids.isPresent()) {
+        if (ids.isPresent() && ids.get() != null) {
             return labelRepository.findAllById(ids.get()).stream()
                     .collect(LinkedHashSet::new, Set::add, Set::addAll);
         }

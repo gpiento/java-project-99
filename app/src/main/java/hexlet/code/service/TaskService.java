@@ -5,18 +5,15 @@ import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
-import hexlet.code.mapper.LabelMapper;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
-import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
-import hexlet.code.repository.TaskStatusRepository;
-import hexlet.code.repository.UserRepository;
 import hexlet.code.specification.TaskSpecification;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +26,11 @@ public class TaskService {
     private final TaskMapper taskMapper;
     private final TaskRepository taskRepository;
     private final TaskSpecification taskSpecification;
-    private final UserRepository userRepository;
-    private final TaskStatusRepository taskStatusRepository;
-    private final LabelRepository labelRepository;
-    private final LabelMapper labelMapper;
 
-    public List<TaskDTO> getAllTasks(TaskParamsDTO taskParamsDTO) {
+    public List<TaskDTO> getAllTasks(TaskParamsDTO taskParamsDTO, PageRequest pageRequest) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
-        return taskRepository.findAll(spec).stream()
-                .map(taskMapper::map)
-                .toList();
+        return taskRepository.findAll(spec, pageRequest).stream()
+                .map(taskMapper::map).toList();
     }
 
     public TaskDTO getTaskById(Long id) {

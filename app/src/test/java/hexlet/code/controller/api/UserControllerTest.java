@@ -7,6 +7,7 @@ import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.util.ModelGenerator;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class UserControllerTest {
-    private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
+    private JwtRequestPostProcessor token;
     private User testUser;
 
     @Autowired
@@ -43,9 +44,15 @@ public class UserControllerTest {
     @Autowired
     private ModelGenerator generator;
 
+    @BeforeEach
+    public void setUp() {
+        testUser = Instancio.of(generator.getUserModel()).create();
+        token = jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+    }
+
     @Test
     public void getAllUsers() throws Exception {
-        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testUser = userRepository.save(testUser);
         mockMvc.perform(get("/api/users")
                         .with(token))
                 .andExpect(status().isOk())
@@ -55,7 +62,7 @@ public class UserControllerTest {
 
     @Test
     public void getUserByIdSuccess() throws Exception {
-        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testUser = userRepository.save(testUser);
         mockMvc.perform(get("/api/users/{id}", testUser.getId())
                         .with(token))
                 .andExpectAll(
@@ -112,7 +119,7 @@ public class UserControllerTest {
 
     @Test
     public void updateUserById() throws Exception {
-        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testUser = userRepository.save(testUser);
         UserUpdateDTO userUpdateDTO = Instancio.of(generator.getUserUpdateDTOModel()).create();
         mockMvc.perform(put("/api/users/{id}", testUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +135,7 @@ public class UserControllerTest {
 
     @Test
     public void deleteUser() throws Exception {
-        testUser = userRepository.save(Instancio.of(generator.getUserModel()).create());
+        testUser = userRepository.save(testUser);
         mockMvc.perform(get("/api/users/{id}", testUser.getId())
                         .with(token))
                 .andExpect(status().isOk())

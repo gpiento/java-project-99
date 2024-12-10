@@ -19,7 +19,6 @@ import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,6 @@ public abstract class TaskMapper {
     TaskStatus taskStatusFromSlug(String slug) {
         return taskStatusRepository.findBySlug(slug).orElseThrow(() ->
                 new ResourceNotFoundException("Task status with slug '%s' not found", slug));
-
     }
 
     @Mapping(target = "title", source = "name")
@@ -73,13 +71,4 @@ public abstract class TaskMapper {
     @Mapping(target = "labels", source = "taskLabelIds", qualifiedByName = "labelsFromIds")
     @Mapping(target = "assignee.id", source = "assigneeId")
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
-
-    public abstract List<TaskDTO> map(List<Task> modelList);
-
-    public TaskStatus toTaskStatus(String statusSlug) {
-        return taskStatusRepository.findBySlug(statusSlug)
-                .orElseThrow(() -> new ResourceNotFoundException("TaskStatus with slug " + statusSlug + " not found"));
-    }
-
-
 }

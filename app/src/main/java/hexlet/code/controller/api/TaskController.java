@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -32,8 +34,10 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("")
-    public ResponseEntity<List<TaskDTO>> getAllTasks(TaskParamsDTO taskParamsDTO) {
-        List<TaskDTO> taskDTOS = taskService.getAllTasks(taskParamsDTO);
+    public ResponseEntity<List<TaskDTO>> getAllTasks(TaskParamsDTO taskParamsDTO,
+                                                     @RequestParam(defaultValue = "1") Integer page) {
+        List<TaskDTO> taskDTOS = taskService.getAllTasks(taskParamsDTO,
+                PageRequest.of(page - 1, 10));
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(taskDTOS.size()))
                 .body(taskDTOS);

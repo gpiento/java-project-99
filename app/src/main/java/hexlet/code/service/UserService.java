@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class UserService {
         return userMapper.map(user);
     }
 
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public UserDTO updateById(Long id, UserUpdateDTO userUpdateDTO) {
         User user = userRepository.findById(id).orElseThrow(
@@ -57,6 +59,7 @@ public class UserService {
         return userMapper.map(user);
     }
 
+    @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public void deleteById(Long id) {
         if (!userRepository.existsById(id)) {

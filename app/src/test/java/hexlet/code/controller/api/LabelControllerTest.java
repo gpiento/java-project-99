@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasItem;
@@ -116,5 +117,18 @@ public class LabelControllerTest {
         mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
                         .with(token))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser
+    public void getAllLabelsAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/labels"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getAllLabelsUnauthenticated() throws Exception {
+        mockMvc.perform(get("/api/labels"))
+                .andExpect(status().isUnauthorized());
     }
 }

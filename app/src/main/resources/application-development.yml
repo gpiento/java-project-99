@@ -19,15 +19,15 @@ spring:
       path: /h2-console
 logging:
   level:
-    root: WARN
+    root: DEBUG
     com.zaxxer.hikari: WARN
     web: WARN
     hexlet:
       code: WARN
     org:
-      springframework: WARN
+      springframework:
       #        web: DEBUG
-      #        security: TRACE
+              security: TRACE
       hibernate: WARN
 #        SQL: DEBUG
 #        type:

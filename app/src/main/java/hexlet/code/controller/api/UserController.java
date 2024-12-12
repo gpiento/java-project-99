@@ -3,6 +3,7 @@ package hexlet.code.controller.api;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.UserService;
@@ -73,14 +74,20 @@ public class UserController {
 
     @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        User currentUser = userUtils.getCurrentUser();
-        User userById = userRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if (!currentUser.getEmail().equals(userById.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        try {
+            /*User currentUser = userUtils.getCurrentUser();
+            User userById = userRepository.findById(id).orElseThrow(() ->
+                    new ResponseStatusException(HttpStatus.NOT_FOUND));
+            if (!currentUser.getEmail().equals(userById.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            }*/
+            userService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        userService.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }

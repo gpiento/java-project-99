@@ -13,4 +13,6 @@ public interface TaskRepository extends
         JpaSpecificationExecutor<Task> {
 
     Optional<Task> findByName(String name);
+
+    boolean existsByAssigneeId(Long id);
 }

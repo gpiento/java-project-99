@@ -36,27 +36,26 @@ public abstract class TaskMapper {
     private LabelRepository labelRepository;
 
     @Named("toLongIds")
-    Set<Long> toLongIds(Set<Label> labels) {
+    public Set<Long> toLongIds(Set<Label> labels) {
         return labels.stream().map(Label::getId).collect(Collectors.toSet());
     }
 
     @Named("labelsFromIds")
-    Set<Label> labelsFromIds(Set<Long> labels) {
+    public Set<Label> labelsFromIds(Set<Long> labels) {
         return labelRepository.findAllById(labels).stream()
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
     }
 
     @Named("idsFromLabels")
-    Set<Label> idsFromLabels(JsonNullable<Set<Long>> ids) {
+    public Set<Label> idsFromLabels(JsonNullable<Set<Long>> ids) {
         if (ids.isPresent() && ids.get() != null) {
-            return labelRepository.findAllById(ids.get()).stream()
-                    .collect(LinkedHashSet::new, Set::add, Set::addAll);
+            return labelsFromIds(ids.get());
         }
         return null;
     }
 
     @Named("taskStatusFromSlug")
-    TaskStatus taskStatusFromSlug(String slug) {
+    public TaskStatus taskStatusFromSlug(String slug) {
         return taskStatusRepository.findBySlug(slug).orElseThrow(() ->
                 new ResourceNotFoundException("Task status with slug '%s' not found", slug));
     }

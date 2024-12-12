@@ -7,6 +7,7 @@ import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.exception.UserAlreadyExistsException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
+import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final TaskRepository taskRepository;
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -62,8 +64,8 @@ public class UserService {
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public void deleteById(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("User with id '%d' not found", id);
+        if (taskRepository.existsByAssigneeId(id)) {
+            throw new IllegalStateException("A user cannot be deleted because they are associated with tasks");
         }
         userRepository.deleteById(id);
         LOGGER.info("Deleted user with id: {}", id);

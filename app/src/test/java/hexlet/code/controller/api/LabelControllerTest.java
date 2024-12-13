@@ -1,6 +1,7 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hexlet.code.component.DefaultUserProperties;
 import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelUpdateDTO;
 import hexlet.code.model.Label;
@@ -8,6 +9,9 @@ import hexlet.code.repository.LabelRepository;
 import hexlet.code.util.ModelGenerator;
 import jakarta.transaction.Transactional;
 import org.instancio.Instancio;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class LabelControllerTest {
 
-    private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
+    private JwtRequestPostProcessor token;
     private Label testLabel;
 
     @Autowired
@@ -44,91 +48,127 @@ public class LabelControllerTest {
     private ModelGenerator generator;
     @Autowired
     private LabelRepository labelRepository;
+    @Autowired
+    private DefaultUserProperties defaultUser;
 
-    @Test
-    public void getAllLabels() throws Exception {
-        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
-        mockMvc.perform(get("/api/labels")
-                        .with(token))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[*].name", hasItem(testLabel.getName())));
+    @BeforeEach
+    public void setUp() {
+        testLabel = Instancio.of(generator.getLabelModel()).create();
+        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
     }
 
-    @Test
-    public void getLabelByIdSuccess() throws Exception {
-        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
-        mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
-                        .with(token))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(testLabel.getId()))
-                .andExpect(jsonPath("$.name").value(testLabel.getName()))
-                .andExpect(jsonPath("$.createdAt").exists());
+    @Nested
+    @DisplayName("GET /api/labels")
+    class GetAllLabelsTest {
+        @Test
+        @DisplayName("should return all labels")
+        public void getAllLabels() throws Exception {
+            testLabel = labelRepository.save(testLabel);
+            mockMvc.perform(get("/api/labels")
+                            .with(token))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$[*].name", hasItem(testLabel.getName())));
+        }
+
+        @Test
+        @DisplayName("should return unauthorized")
+        public void getAllLabelsUnauthenticated() throws Exception {
+            mockMvc.perform(get("/api/labels"))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        @Test
+        @WithMockUser
+        @DisplayName("should return all labels")
+        public void getAllLabelsAuthenticated() throws Exception {
+            mockMvc.perform(get("/api/labels"))
+                    .andExpect(status().isOk());
+        }
     }
 
-    @Test
-    public void getLabelByIdNotFound() throws Exception {
-        mockMvc.perform(get("/api/labels/{id}", 999999999)
-                        .with(token))
-                .andExpect(status().isNotFound());
+    @Nested
+    @DisplayName("GET /api/labels/{id}")
+    class GetLabelByIdTest {
+        @Test
+        @DisplayName("should return label by id")
+        public void getLabelByIdSuccess() throws Exception {
+            testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
+            mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
+                            .with(token))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.id").value(testLabel.getId()))
+                    .andExpect(jsonPath("$.name").value(testLabel.getName()))
+                    .andExpect(jsonPath("$.createdAt").exists());
+        }
+
+        @Test
+        @DisplayName("should return not found")
+        public void getLabelByIdNotFound() throws Exception {
+            mockMvc.perform(get("/api/labels/{id}", 999999999)
+                            .with(token))
+                    .andExpect(status().isNotFound());
+        }
     }
 
-    @Test
-    public void createLabel() throws Exception {
-        LabelCreateDTO createLabel = Instancio.of(generator.getLabelCreateDTOModel()).create();
-        mockMvc.perform(post("/api/labels")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createLabel))
-                        .with(token))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value(createLabel.getName()))
-                .andExpect(jsonPath("$.createdAt").exists());
+    @Nested
+    @DisplayName("POST /api/labels")
+    class CreateLabelTest {
+        @Test
+        @DisplayName("should create label")
+        public void createLabel() throws Exception {
+            LabelCreateDTO createLabel = Instancio.of(generator.getLabelCreateDTOModel()).create();
+            mockMvc.perform(post("/api/labels")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createLabel))
+                            .with(token))
+                    .andExpect(status().isCreated())
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.id").exists())
+                    .andExpect(jsonPath("$.name").value(createLabel.getName()))
+                    .andExpect(jsonPath("$.createdAt").exists());
+        }
     }
 
-    @Test
-    public void updateLabelById() throws Exception {
-        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
-        LabelUpdateDTO labelUpdateDTO = Instancio.of(generator.getLabelUpdateDTOModel()).create();
-        mockMvc.perform(put("/api/labels/{id}", testLabel.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(labelUpdateDTO))
-                        .with(token))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(jsonPath("$.id").value(testLabel.getId()))
-                .andExpect(jsonPath("$.name").value(labelUpdateDTO.getName().get()))
-                .andExpect(jsonPath("$.createdAt").exists());
+    @Nested
+    @DisplayName("PUT /api/labels/{id}")
+    class UpdateLabelTest {
+        @Test
+        @DisplayName("should update label")
+        public void updateLabelById() throws Exception {
+            testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
+            LabelUpdateDTO labelUpdateDTO = Instancio.of(generator.getLabelUpdateDTOModel()).create();
+            mockMvc.perform(put("/api/labels/{id}", testLabel.getId())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(labelUpdateDTO))
+                            .with(token))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andDo(print())
+                    .andExpect(jsonPath("$.id").value(testLabel.getId()))
+                    .andExpect(jsonPath("$.name").value(labelUpdateDTO.getName().get()))
+                    .andExpect(jsonPath("$.createdAt").exists());
+        }
     }
 
-    @Test
-    public void destroy() throws Exception {
-        testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
-        mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
-                        .with(token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(testLabel.getName()));
-        mockMvc.perform(delete("/api/labels/{id}", testLabel.getId())
-                        .with(token))
-                .andExpect(status().isNoContent());
-        mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
-                        .with(token))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithMockUser
-    public void getAllLabelsAuthenticated() throws Exception {
-        mockMvc.perform(get("/api/labels"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void getAllLabelsUnauthenticated() throws Exception {
-        mockMvc.perform(get("/api/labels"))
-                .andExpect(status().isUnauthorized());
+    @Nested
+    @DisplayName("DELETE /api/labels/{id}")
+    class DeleteLabelTest {
+        @Test
+        @DisplayName("should delete label")
+        public void destroy() throws Exception {
+            testLabel = labelRepository.save(Instancio.of(generator.getLabelModel()).create());
+            mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
+                            .with(token))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name").value(testLabel.getName()));
+            mockMvc.perform(delete("/api/labels/{id}", testLabel.getId())
+                            .with(token))
+                    .andExpect(status().isNoContent());
+            mockMvc.perform(get("/api/labels/{id}", testLabel.getId())
+                            .with(token))
+                    .andExpect(status().isNotFound());
+        }
     }
 }

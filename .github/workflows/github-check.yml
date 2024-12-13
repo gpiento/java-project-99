@@ -25,14 +25,17 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - uses: actions/cache@v3
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
       - name: Build with Gradle
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: ./gradlew build --no-daemon
-
-      - name: Check for build errors
-        if: ${{ failure() }}
-        run: exit 1
+          CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
+        run: ./gradlew --no-daemon build
 
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v6.0.0
@@ -40,5 +43,5 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
           JACOCO_SOURCE_PATH: app/src/main/java
         with:
-          coverageCommand: 'make report'
+          coverageCommand: ./gradlew jacocoTestReport
           coverageLocations: '${{github.workspace}}/app/build/reports/jacoco/test/jacocoTestReport.xml:jacoco'

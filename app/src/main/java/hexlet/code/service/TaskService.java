@@ -4,6 +4,7 @@ import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
+import hexlet.code.exception.ResourceAlreadyExistsException;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
@@ -23,8 +24,11 @@ import java.util.List;
 @AllArgsConstructor
 public class TaskService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskService.class);
+
     private final TaskMapper taskMapper;
+
     private final TaskRepository taskRepository;
+
     private final TaskSpecification taskSpecification;
 
     public List<TaskDTO> getAllTasks(TaskParamsDTO taskParamsDTO, PageRequest pageRequest) {
@@ -34,13 +38,17 @@ public class TaskService {
     }
 
     public TaskDTO getTaskById(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task with id '%d' not found", id));
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task with id '" + id + "' not found"));
         return taskMapper.map(task);
     }
 
     @Transactional
     public TaskDTO create(TaskCreateDTO taskCreateDTO) {
+        if (taskRepository.existsByName(taskCreateDTO.getTitle())) {
+            throw new ResourceAlreadyExistsException("Task with name '"
+                    + taskCreateDTO.getTitle() + "' already exists");
+        }
         Task task = taskMapper.map(taskCreateDTO);
         task = taskRepository.save(task);
         LOGGER.info("Task created with id: {}", task.getId());
@@ -49,18 +57,18 @@ public class TaskService {
 
     @Transactional
     public TaskDTO updateById(Long id, TaskUpdateDTO taskUpdateDTO) {
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task with id '%d' not found", id));
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task with id '" + id + "' not found"));
         taskMapper.update(taskUpdateDTO, task);
-        task = taskRepository.save(task);
         LOGGER.info("Updated task with id: {}", id);
+        task = taskRepository.save(task);
         return taskMapper.map(task);
     }
 
     @Transactional
     public void deleteById(Long id) {
         if (!taskRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Task with id '%d' not found", id);
+            throw new ResourceNotFoundException("Task with id '" + id + "' not found");
         }
         taskRepository.deleteById(id);
         LOGGER.info("Deleted task with id: {}", id);

@@ -14,5 +14,5 @@ public interface TaskRepository extends
 
     Optional<Task> findByName(String name);
 
-    boolean existsByAssigneeId(Long id);
+    boolean existsByName(String name);
 }

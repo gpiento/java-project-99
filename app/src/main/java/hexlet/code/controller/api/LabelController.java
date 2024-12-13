@@ -4,12 +4,13 @@ import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelDTO;
 import hexlet.code.dto.label.LabelUpdateDTO;
 import hexlet.code.service.LabelService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,43 +29,39 @@ public class LabelController {
 
     private final LabelService labelService;
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("")
-    public ResponseEntity<List<LabelDTO>> getAllLabels() {
+    public ResponseEntity<List<LabelDTO>> getAll() {
         List<LabelDTO> labelDTOS = labelService.getAllLabels();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(labelDTOS.size()))
                 .body(labelDTOS);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<LabelDTO> getLabelById(@PathVariable Long id) {
+    public ResponseEntity<LabelDTO> getById(@PathVariable Long id) {
         LabelDTO labelDTO = labelService.getLabelById(id);
-        return ResponseEntity.ok(labelDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(labelDTO);
     }
 
-    @ApiResponse(responseCode = "201", description = "Label created")
-    @PreAuthorize("isAuthenticated()")
+    @ApiResponse(responseCode = "201", description = "Label created",
+            content = @Content(schema = @Schema(implementation = LabelDTO.class)))
     @PostMapping("")
-    public ResponseEntity<LabelDTO> createLabel(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
+    public ResponseEntity<LabelDTO> create(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
         LabelDTO labelDTO = labelService.createLabel(labelCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(labelDTO);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}")
-    public ResponseEntity<LabelDTO> update(@PathVariable Long id,
-                                           @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
+    public ResponseEntity<LabelDTO> updateById(@PathVariable Long id,
+                                               @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
         LabelDTO labelDTO = labelService.updateLabel(id, labelUpdateDTO);
-        return ResponseEntity.ok(labelDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(labelDTO);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @ApiResponse(responseCode = "204", description = "Label deleted")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLabel(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         labelService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

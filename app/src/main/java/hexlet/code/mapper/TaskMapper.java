@@ -56,8 +56,8 @@ public abstract class TaskMapper {
 
     @Named("taskStatusFromSlug")
     public TaskStatus taskStatusFromSlug(String slug) {
-        return taskStatusRepository.findBySlug(slug).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with slug '%s' not found", slug));
+        return taskStatusRepository.findBySlug(slug)
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with slug '" + slug + "' not found"));
     }
 
     @Mapping(target = "title", source = "name")

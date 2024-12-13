@@ -3,8 +3,8 @@ package hexlet.code.service;
 import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
 import hexlet.code.dto.taskstatus.TaskStatusDTO;
 import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
+import hexlet.code.exception.ResourceAlreadyExistsException;
 import hexlet.code.exception.ResourceNotFoundException;
-import hexlet.code.exception.TaskStatusAlreadyExistsException;
 import hexlet.code.mapper.TaskStatusMapper;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
@@ -20,7 +20,9 @@ import java.util.List;
 @AllArgsConstructor
 public class TaskStatusService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskStatusService.class);
+
     private final TaskStatusRepository taskStatusRepository;
+
     private final TaskStatusMapper taskStatusMapper;
 
     public List<TaskStatusDTO> getAllTaskStatuses() {
@@ -31,16 +33,15 @@ public class TaskStatusService {
 
     public TaskStatusDTO getTaskStatusById(Long id) {
         TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with id '%d' not found", id));
+                new ResourceNotFoundException("Task status with id '" + id + "' not found"));
         return taskStatusMapper.map(taskStatus);
     }
 
     @Transactional
     public TaskStatusDTO createTaskStatus(TaskStatusCreateDTO taskStatusCreateDTO) {
         if (taskStatusRepository.existsBySlug(taskStatusCreateDTO.getSlug())) {
-            LOGGER.info("Task status with slug '{}' already exists", taskStatusCreateDTO.getSlug());
-            throw new TaskStatusAlreadyExistsException("Task status with slug '%s' already exists",
-                    taskStatusCreateDTO.getSlug());
+            throw new ResourceAlreadyExistsException("Task status with slug '"
+                    + taskStatusCreateDTO.getSlug() + "' already exists");
         }
         TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
         taskStatus = taskStatusRepository.save(taskStatus);
@@ -50,8 +51,8 @@ public class TaskStatusService {
 
     @Transactional
     public TaskStatusDTO updateTaskStatus(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with id '%d' not found", id));
+        TaskStatus taskStatus = taskStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '" + id + "' not found"));
         taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
         LOGGER.info("Updated task status with id: {}", id);
         taskStatus = taskStatusRepository.save(taskStatus);
@@ -61,7 +62,7 @@ public class TaskStatusService {
     @Transactional
     public void deleteById(Long id) {
         if (!taskStatusRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Task status with id '%d' not found", id);
+            throw new ResourceNotFoundException("Task status with id '" + id + "' not found");
         }
         taskStatusRepository.deleteById(id);
         LOGGER.info("Deleted task status with id: {}", id);

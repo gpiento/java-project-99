@@ -3,11 +3,7 @@ package hexlet.code.controller.api;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
-import hexlet.code.exception.ResourceNotFoundException;
-import hexlet.code.model.User;
-import hexlet.code.repository.UserRepository;
 import hexlet.code.service.UserService;
-import hexlet.code.util.UserUtils;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -33,11 +28,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserUtils userUtils;
-    private final UserRepository userRepository;
 
     @GetMapping("")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAll() {
         List<UserDTO> userDTOS = userService.getAllUsers();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(userDTOS.size()))
@@ -45,49 +38,31 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getById(@PathVariable Long id) {
         UserDTO userDTO = userService.getUserById(id);
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
     @ApiResponse(responseCode = "201", description = "Сreated",
             content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping("")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserDTO> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         UserDTO createUser = userService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
     @ApiResponse(responseCode = "200", description = "OK")
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUserById(@PathVariable Long id,
-                                                  @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        User currentUser = userUtils.getCurrentUser();
-        User userById = userRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if (!currentUser.getEmail().equals(userById.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+    public ResponseEntity<UserDTO> updateById(@PathVariable Long id,
+                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
         UserDTO updatedUser = userService.updateById(id, userUpdateDTO);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            /*User currentUser = userUtils.getCurrentUser();
-            User userById = userRepository.findById(id).orElseThrow(() ->
-                    new ResponseStatusException(HttpStatus.NOT_FOUND));
-            if (!currentUser.getEmail().equals(userById.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-            }*/
-            userService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        userService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

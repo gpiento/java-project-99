@@ -3,11 +3,10 @@ package hexlet.code.service;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
+import hexlet.code.exception.ResourceAlreadyExistsException;
 import hexlet.code.exception.ResourceNotFoundException;
-import hexlet.code.exception.UserAlreadyExistsException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
-import hexlet.code.repository.TaskRepository;
 import hexlet.code.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,9 +21,10 @@ import java.util.List;
 @AllArgsConstructor
 public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
+
     private final UserMapper userMapper;
-    private final TaskRepository taskRepository;
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -33,8 +33,8 @@ public class UserService {
     }
 
     public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("User with id '%d' not found", id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id '" + id + "' not found"));
         return userMapper.map(user);
     }
 
@@ -42,7 +42,8 @@ public class UserService {
     public UserDTO createUser(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             LOGGER.info("User with email {} already exits", userCreateDTO.getEmail());
-            throw new UserAlreadyExistsException("User with email '%s' already exists", userCreateDTO.getEmail());
+            throw new ResourceAlreadyExistsException("User with email '"
+                    + userCreateDTO.getEmail() + "' already exists");
         }
         User user = userMapper.map(userCreateDTO);
         user = userRepository.save(user);
@@ -53,8 +54,8 @@ public class UserService {
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public UserDTO updateById(Long id, UserUpdateDTO userUpdateDTO) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("User with id '%d' not found", id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id '" + id + "' not found"));
         userMapper.update(userUpdateDTO, user);
         LOGGER.info("Updated user with id: {}", id);
         user = userRepository.save(user);
@@ -64,8 +65,8 @@ public class UserService {
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public void deleteById(Long id) {
-        if (taskRepository.existsByAssigneeId(id)) {
-            throw new IllegalStateException("A user cannot be deleted because they are associated with tasks");
+        if (!userRepository.existsById(id)) {
+            throw new ResourceNotFoundException("User with id '" + id + "' not found");
         }
         userRepository.deleteById(id);
         LOGGER.info("Deleted user with id: {}", id);

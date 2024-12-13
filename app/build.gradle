@@ -43,7 +43,7 @@ ext {
     lombokMapstructBindingVersion = '0.2.0'
     datafakerVersion = '2.4.2'
     instancioVersion = '5.2.1'
-    sentryVersion = '7.19.0'
+    sentryVersion = '7.18.1'
     jsonUnitVersion = '4.1.0'
     junitVersion = '5.11.3'
     junitPlatformVersion = '1.11.1'
@@ -58,6 +58,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootVersion"
+    implementation "org.springframework:spring-webmvc:6.2.1"
     testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
@@ -71,11 +72,11 @@ dependencies {
     runtimeOnly "com.h2database:h2:$h2Version"
     runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
 
-    compileOnly "org.projectlombok:lombok:$lombokVersion"
-    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    implementation "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBindingVersion"
+//    compileOnly "org.projectlombok:lombok:$lombokVersion"
+//    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+//    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+//    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+//    implementation "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBindingVersion"
 
     implementation "net.datafaker:datafaker:$datafakerVersion"
     implementation "org.instancio:instancio-junit:$instancioVersion"

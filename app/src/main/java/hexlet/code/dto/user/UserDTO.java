@@ -1,6 +1,7 @@
 package hexlet.code.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @ToString
+@JsonPropertyOrder({"id", "email", "firstName", "lastName", "createdAt"})
 public class UserDTO {
 
     private Long id;

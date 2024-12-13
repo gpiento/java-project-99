@@ -67,6 +67,11 @@ dependencies {
     implementation "org.mapstruct:mapstruct:$mapStructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
 
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2'
+
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion"
 
     runtimeOnly "com.h2database:h2:$h2Version"
@@ -128,6 +133,7 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
+    additionalSourceDirs.setFrom files("app/build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
 }
 
 testlogger {

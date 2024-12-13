@@ -13,6 +13,7 @@ public class JacksonConfig {
     public Jackson2ObjectMapperBuilder objectMapperBuilder() {
 
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+
         return builder
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .modulesToInstall(new JsonNullableModule());

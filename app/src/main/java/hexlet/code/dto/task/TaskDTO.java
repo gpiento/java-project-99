@@ -9,18 +9,9 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.Set;
 
-@JsonPropertyOrder({
-        "id",
-        "taskLabelIds",
-        "index",
-        "createdAt",
-        "assignee",
-        "title",
-        "content",
-        "status"
-})
 @Getter
 @Setter
+@JsonPropertyOrder({"id", "taskLabelIds", "index", "createdAt", "assignee_id", "title", "context", "status"})
 public class TaskDTO {
 
     private Long id;

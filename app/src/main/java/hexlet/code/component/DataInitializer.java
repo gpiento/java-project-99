@@ -21,11 +21,17 @@ import java.util.stream.Stream;
 public class DataInitializer implements ApplicationRunner {
 
     private final CustomUserDetailsService customUserDetailsService;
+
     private final TaskStatusRepository taskStatusRepository;
+
     private final LabelRepository labelRepository;
+
     private final UserRepository userRepository;
+
     private final DefaultUserProperties defaultUser;
+
     private final TaskStatusService taskStatusService;
+
     private final LabelService labelService;
 
     @Override

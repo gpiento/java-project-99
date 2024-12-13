@@ -31,7 +31,7 @@ repositories {
 }
 
 ext {
-    springVersion = '6.2.0'
+    springVersion = '6.2.1'
     springBootVersion = '3.4.0'
     springSecurityTestVersion = '6.4.1'
     hibernateCoreVersion = '6.6.3.Final'
@@ -42,8 +42,8 @@ ext {
     lombokVersion = '1.18.36'
     lombokMapstructBindingVersion = '0.2.0'
     datafakerVersion = '2.4.2'
-    instancioVersion = '5.2.0'
-    sentryVersion = '7.18.1'
+    instancioVersion = '5.2.1'
+    sentryVersion = '7.19.0'
     jsonUnitVersion = '4.1.0'
     junitVersion = '5.11.3'
     junitPlatformVersion = '1.11.1'
@@ -170,8 +170,8 @@ sentry {
 //     Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
 //     This enables source context, allowing you to see your source
 //     code as part of your stack traces in Sentry.
-    includeSourceContext = false
+    includeSourceContext = true
     org = "mycompany-k9"
-    projectName = "java-spring-boot"
+    projectName = "java-project-99"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }

@@ -8,6 +8,8 @@ spring:
     ansi:
       enabled: always
 logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - [%t] - %5p - %c{1.} - %msg%n"
   level:
     root: INFO
     org:

@@ -30,7 +30,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<List<UserDTO>> getAll() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userDTOS = userService.getAllUsers();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(userDTOS.size()))
@@ -38,30 +38,30 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         UserDTO userDTO = userService.getUserById(id);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
-    @ApiResponse(responseCode = "201", description = "Сreated",
+    @ApiResponse(responseCode = "201", description = "Created",
             content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping("")
-    public ResponseEntity<UserDTO> create(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         UserDTO createUser = userService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 
     @ApiResponse(responseCode = "200", description = "OK")
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateById(@PathVariable Long id,
-                                              @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity<UserDTO> updateUserById(@PathVariable Long id,
+                                                  @Valid @RequestBody UserUpdateDTO userUpdateDTO) {
         UserDTO updatedUser = userService.updateById(id, userUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteUserById(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

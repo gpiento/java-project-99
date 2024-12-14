@@ -30,7 +30,7 @@ public class LabelController {
     private final LabelService labelService;
 
     @GetMapping("")
-    public ResponseEntity<List<LabelDTO>> getAll() {
+    public ResponseEntity<List<LabelDTO>> getAllLabels() {
         List<LabelDTO> labelDTOS = labelService.getAllLabels();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(labelDTOS.size()))
@@ -38,7 +38,7 @@ public class LabelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LabelDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<LabelDTO> getLabelById(@PathVariable Long id) {
         LabelDTO labelDTO = labelService.getLabelById(id);
         return ResponseEntity.status(HttpStatus.OK).body(labelDTO);
     }
@@ -46,21 +46,21 @@ public class LabelController {
     @ApiResponse(responseCode = "201", description = "Label created",
             content = @Content(schema = @Schema(implementation = LabelDTO.class)))
     @PostMapping("")
-    public ResponseEntity<LabelDTO> create(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
+    public ResponseEntity<LabelDTO> createLabel(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
         LabelDTO labelDTO = labelService.createLabel(labelCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(labelDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LabelDTO> updateById(@PathVariable Long id,
-                                               @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
+    public ResponseEntity<LabelDTO> updateLabelById(@PathVariable Long id,
+                                                    @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
         LabelDTO labelDTO = labelService.updateLabel(id, labelUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(labelDTO);
     }
 
     @ApiResponse(responseCode = "204", description = "Label deleted")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteLabelById(@PathVariable Long id) {
         labelService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

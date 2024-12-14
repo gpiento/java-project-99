@@ -9,7 +9,7 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'io.freefair.lombok' version '8.11'
+//    id 'io.freefair.lombok' version '8.11'
     id 'com.adarshr.test-logger' version '4.0.0'
     id 'com.github.ben-manes.versions' version '0.51.0'
 
@@ -64,6 +64,11 @@ dependencies {
 
     implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
 
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    implementation "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBindingVersion"
     implementation "org.mapstruct:mapstruct:$mapStructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
 
@@ -76,12 +81,6 @@ dependencies {
 
     runtimeOnly "com.h2database:h2:$h2Version"
     runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
-
-//    compileOnly "org.projectlombok:lombok:$lombokVersion"
-//    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-//    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-//    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
-//    implementation "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBindingVersion"
 
     implementation "net.datafaker:datafaker:$datafakerVersion"
     implementation "org.instancio:instancio-junit:$instancioVersion"

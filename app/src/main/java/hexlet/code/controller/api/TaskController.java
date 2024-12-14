@@ -33,8 +33,8 @@ public class TaskController {
     private final TaskService taskService;
 
     @GetMapping("")
-    public ResponseEntity<List<TaskDTO>> getAll(TaskParamsDTO taskParamsDTO,
-                                                @RequestParam(defaultValue = "1") Integer page) {
+    public ResponseEntity<List<TaskDTO>> getAllTasks(TaskParamsDTO taskParamsDTO,
+                                                     @RequestParam(defaultValue = "1") Integer page) {
         List<TaskDTO> taskDTOS = taskService.getAllTasks(taskParamsDTO, PageRequest.of(page - 1, 10));
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(taskDTOS.size()))
@@ -42,7 +42,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
         TaskDTO taskDTO = taskService.getTaskById(id);
         return ResponseEntity.status(HttpStatus.OK).body(taskDTO);
     }
@@ -50,21 +50,22 @@ public class TaskController {
     @ApiResponse(responseCode = "201", description = "Сreated",
             content = @Content(schema = @Schema(implementation = TaskDTO.class)))
     @PostMapping("")
-    public ResponseEntity<TaskDTO> create(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
+    public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
         TaskDTO taskDTO = taskService.create(taskCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(taskDTO);
     }
 
     @ApiResponse(responseCode = "200", description = "OK")
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> updateById(@PathVariable Long id, @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
+    public ResponseEntity<TaskDTO> updateTaskById(@PathVariable Long id,
+                                                  @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
         TaskDTO taskDTO = taskService.updateById(id, taskUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(taskDTO);
     }
 
     @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTaskById(@PathVariable Long id) {
         taskService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

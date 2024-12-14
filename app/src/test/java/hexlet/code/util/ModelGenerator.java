@@ -18,7 +18,6 @@ import net.datafaker.Faker;
 import org.instancio.Instancio;
 import org.instancio.Model;
 import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import static org.instancio.Select.field;
@@ -28,23 +27,34 @@ import static org.instancio.Select.field;
 public class ModelGenerator {
 
     private Model<User> userModel;
-    private Model<UserCreateDTO> userCreateDTOModel;
-    private Model<UserUpdateDTO> userUpdateDTOModel;
-    private Model<TaskStatus> taskStatusModel;
-    private Model<TaskStatusCreateDTO> taskStatusCreateDTOModel;
-    private Model<TaskStatusUpdateDTO> taskStatusUpdateDTOModel;
-    private Model<Task> taskModel;
-    private Model<TaskCreateDTO> taskCreateDTOModel;
-    private Model<TaskUpdateDTO> taskUpdateDTOModel;
-    private Model<Label> labelModel;
-    private Model<LabelCreateDTO> labelCreateDTOModel;
-    private Model<LabelUpdateDTO> labelUpdateDTOModel;
 
-    @Autowired
-    private Faker faker;
+    private Model<UserCreateDTO> userCreateDTOModel;
+
+    private Model<UserUpdateDTO> userUpdateDTOModel;
+
+    private Model<TaskStatus> taskStatusModel;
+
+    private Model<TaskStatusCreateDTO> taskStatusCreateDTOModel;
+
+    private Model<TaskStatusUpdateDTO> taskStatusUpdateDTOModel;
+
+    private Model<Task> taskModel;
+
+    private Model<TaskCreateDTO> taskCreateDTOModel;
+
+    private Model<TaskUpdateDTO> taskUpdateDTOModel;
+
+    private Model<Label> labelModel;
+
+    private Model<LabelCreateDTO> labelCreateDTOModel;
+
+    private Model<LabelUpdateDTO> labelUpdateDTOModel;
 
     @PostConstruct
     private void init() {
+
+        Faker faker = new Faker();
+
         userModel = Instancio.of(User.class)
                 .ignore(field(User::getId))
                 .supply(field(User::getFirstName), () -> faker.name().firstName())

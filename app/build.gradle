@@ -106,9 +106,9 @@ dependencies {
 //    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
+//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
+//    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
+//    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 
     //testImplementation libs.junit.jupiter
     //implementation 'com.google.guava:guava:33.0.0-jre'

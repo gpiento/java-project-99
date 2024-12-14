@@ -36,6 +36,7 @@ public class LabelController {
                 .header("X-Total-Count", String.valueOf(labelDTOS.size()))
                 .body(labelDTOS);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<LabelDTO> getById(@PathVariable Long id) {
         LabelDTO labelDTO = labelService.getLabelById(id);

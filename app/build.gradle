@@ -58,8 +58,14 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootVersion"
 //    implementation "org.springframework:spring-webmvc:6.2.1"
+
     testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
+//    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 
     implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
 
@@ -67,6 +73,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
     implementation "org.mapstruct:mapstruct:$mapStructVersion"
     annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
 
@@ -94,21 +101,10 @@ dependencies {
     testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 //    testImplementation 'org.mockito:mockito-core:5.14.2'
 
-//    testImplementation platform("org.junit:junit-bom:$junitVersion")
-//    testImplementation "org.junit.platform:junit-platform-launcher"
-    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
-//    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-//    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-//    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation platform("org.junit:junit-bom:$junitVersion")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
-
-    //testImplementation libs.junit.jupiter
-    //implementation 'com.google.guava:guava:33.0.0-jre'
 //    implementation 'org.slf4j:slf4j-api:1.7.32'
 }
 
@@ -131,9 +127,9 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
-    additionalSourceDirs.setFrom files("src/main/java", "build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
-    sourceDirectories.setFrom files("src/main/java", "build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
-    classDirectories.setFrom files("build/classes/java/main", "build/additional/classes")
+    additionalSourceDirs.setFrom files("build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
+    sourceDirectories.setFrom files("src/main/java")
+    classDirectories.setFrom files("build/classes/java/main")
 //    additionalSourceDirs.setFrom files("app/build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
 }
 

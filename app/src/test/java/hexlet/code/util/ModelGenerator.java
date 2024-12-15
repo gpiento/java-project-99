@@ -141,9 +141,12 @@ public class ModelGenerator {
 
         labelModel = Instancio.of(Label.class)
                 .ignore(field(Label::getId))
-                .supply(field(Label::getName), () -> faker.lorem()
-                        .sentence(1, 3)
-                        .toLowerCase())
+                .supply(field(Label::getName), () -> {
+                    int minLength = 3;
+                    int maxLength = 1000;
+                    int length = faker.random().nextInt(minLength, maxLength);
+                    return faker.lorem().fixedString(length).toLowerCase();
+                })
                 .ignore(field(Label::getCreatedAt))
                 .toModel();
 

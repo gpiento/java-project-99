@@ -32,6 +32,7 @@ repositories {
 ext {
     springVersion = '6.2.1'
     springBootVersion = '3.4.0'
+    springDataJpaVersion = '3.4.1'
     springSecurityTestVersion = '6.4.1'
     hibernateCoreVersion = '6.6.3.Final'
     mapStructVersion = '1.6.3'
@@ -42,7 +43,7 @@ ext {
     lombokMapstructBindingVersion = '0.2.0'
     datafakerVersion = '2.4.2'
     instancioVersion = '5.2.1'
-    sentryVersion = '7.18.1'
+    sentryVersion = '7.19.0'
     jsonUnitVersion = '4.1.0'
     junitVersion = '5.11.3'
     junitPlatformVersion = '1.11.1'
@@ -53,6 +54,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
+    implementation "org.springframework.data:spring-data-jpa:$springDataJpaVersion"
     implementation "org.springframework.boot:spring-boot-devtools:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
@@ -62,10 +64,10 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-//    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
-//    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.6.0'
+//    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
 
     implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
 

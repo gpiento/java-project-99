@@ -32,8 +32,7 @@ public class LabelService {
     }
 
     public LabelDTO getLabelById(Long id) {
-        Label label = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Label with id '" + id + "' not found"));
+        Label label = findLabelById(id);
         return labelMapper.map(label);
     }
 
@@ -51,8 +50,7 @@ public class LabelService {
 
     @Transactional
     public LabelDTO updateLabel(Long id, LabelUpdateDTO labelUpdateDTO) {
-        Label label = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Label with id '" + id + "' not found"));
+        Label label = findLabelById(id);
         labelMapper.update(labelUpdateDTO, label);
         LOGGER.info("Updated label with id: {}", label.getId());
         label = labelRepository.save(label);
@@ -61,10 +59,13 @@ public class LabelService {
 
     @Transactional
     public void deleteById(Long id) {
-        if (!labelRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Label with id '" + id + "' not found");
-        }
+        findLabelById(id);
         labelRepository.deleteById(id);
         LOGGER.info("Deleted label with id: {}", id);
+    }
+
+    private Label findLabelById(Long id) {
+        return labelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label with id '" + id + "' not found"));
     }
 }

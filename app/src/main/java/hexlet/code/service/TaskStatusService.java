@@ -32,8 +32,7 @@ public class TaskStatusService {
     }
 
     public TaskStatusDTO getTaskStatusById(Long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with id '" + id + "' not found"));
+        TaskStatus taskStatus = findTaskStatusById(id);
         return taskStatusMapper.map(taskStatus);
     }
 
@@ -51,8 +50,7 @@ public class TaskStatusService {
 
     @Transactional
     public TaskStatusDTO updateTaskStatus(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '" + id + "' not found"));
+        TaskStatus taskStatus = findTaskStatusById(id);
         taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
         LOGGER.info("Updated task status with id: {}", id);
         taskStatus = taskStatusRepository.save(taskStatus);
@@ -61,10 +59,13 @@ public class TaskStatusService {
 
     @Transactional
     public void deleteById(Long id) {
-        if (!taskStatusRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Task status with id '" + id + "' not found");
-        }
+        findTaskStatusById(id);
         taskStatusRepository.deleteById(id);
         LOGGER.info("Deleted task status with id: {}", id);
+    }
+
+    private TaskStatus findTaskStatusById(Long id) {
+        return taskStatusRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '" + id + "' not found"));
     }
 }

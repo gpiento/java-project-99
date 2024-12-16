@@ -59,7 +59,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootVersion"
-//    implementation "org.springframework:spring-webmvc:6.2.1"
+    implementation "org.springframework:spring-webmvc:6.2.1"
 
     testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
     testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"

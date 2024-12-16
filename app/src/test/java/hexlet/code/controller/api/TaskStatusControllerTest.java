@@ -32,9 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class TaskStatusControllerTest {
-    private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
-    private TaskStatus testTaskStatus;
 
+    private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -43,6 +42,8 @@ public class TaskStatusControllerTest {
     private ObjectMapper objectMapper;
     @Autowired
     private ModelGenerator generator;
+
+    private TaskStatus testTaskStatus;
 
     @Nested
     @DisplayName("GET /api/task_statuses")

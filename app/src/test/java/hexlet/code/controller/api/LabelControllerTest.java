@@ -1,7 +1,6 @@
 package hexlet.code.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hexlet.code.component.DefaultUserProperties;
 import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelUpdateDTO;
 import hexlet.code.model.Label;
@@ -38,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LabelControllerTest {
 
     private JwtRequestPostProcessor token;
+
     private Label testLabel;
 
     @Autowired
@@ -48,13 +48,11 @@ public class LabelControllerTest {
     private ModelGenerator generator;
     @Autowired
     private LabelRepository labelRepository;
-    @Autowired
-    private DefaultUserProperties defaultUser;
 
     @BeforeEach
     public void setUp() {
         testLabel = Instancio.of(generator.getLabelModel()).create();
-        token = jwt().jwt(builder -> builder.subject(defaultUser.getEmail()));
+        token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
     }
 
     @Nested

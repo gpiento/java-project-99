@@ -44,9 +44,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TaskControllerTest {
 
     private final JwtRequestPostProcessor token = jwt().jwt(builder -> builder.subject("hexlet@example.com"));
+
     private Task testTask;
+
     private User testUser;
+
     private TaskStatus testTaskStatus;
+
     private Label testLabel;
 
     @Autowired

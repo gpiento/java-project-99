@@ -29,6 +29,9 @@ public class CustomUserDetailsService implements UserDetailsManager {
 
     @Override
     public void createUser(UserDetails userData) {
+        if (userData.getPassword() == null) {
+            throw new IllegalArgumentException("Password cannot be null");
+        }
         if (userRepository.findByEmail(userData.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException("User was already exist");
         }

@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
 
+    private static final String DEFAULT_USER = "hexlet@example.com";
+
     private final CustomUserDetailsService customUserDetailsService;
 
     private final TaskStatusRepository taskStatusRepository;
@@ -28,18 +30,16 @@ public class DataInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
 
-    private final DefaultUserProperties defaultUser;
-
     private final TaskStatusService taskStatusService;
 
     private final LabelService labelService;
 
     @Override
     public void run(ApplicationArguments args) {
-        if (!userRepository.existsByEmail(defaultUser.getEmail())) {
+        if (!userRepository.existsByEmail(DEFAULT_USER)) {
             User user = new User();
-            user.setEmail(defaultUser.getEmail());
-            user.setPasswordDigest(defaultUser.getPassword());
+            user.setEmail(DEFAULT_USER);
+            user.setPasswordDigest("qwerty");
             customUserDetailsService.createUser(user);
         }
 

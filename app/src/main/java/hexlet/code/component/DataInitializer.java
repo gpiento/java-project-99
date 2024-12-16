@@ -51,11 +51,11 @@ public class DataInitializer implements ApplicationRunner {
                         new TaskStatusCreateDTO("Published", "published")
                 )
                 .filter(taskStatus -> !taskStatusRepository.existsBySlug(taskStatus.getSlug()))
-                .forEach(taskStatusService::createTaskStatus);
+                .forEach(taskStatusService::create);
 
         Stream.of("bug", "feature")
                 .map(LabelCreateDTO::new)
                 .filter(label -> !labelRepository.existsByName(label.getName()))
-                .forEach(labelService::createLabel);
+                .forEach(labelService::create);
     }
 }

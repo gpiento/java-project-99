@@ -31,7 +31,7 @@ public class LabelController {
 
     @GetMapping("")
     public ResponseEntity<List<LabelDTO>> getAllLabels() {
-        List<LabelDTO> labelDTOS = labelService.getAllLabels();
+        List<LabelDTO> labelDTOS = labelService.getAll();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(labelDTOS.size()))
                 .body(labelDTOS);
@@ -39,7 +39,7 @@ public class LabelController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LabelDTO> getLabelById(@PathVariable Long id) {
-        LabelDTO labelDTO = labelService.getLabelById(id);
+        LabelDTO labelDTO = labelService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(labelDTO);
     }
 
@@ -47,14 +47,14 @@ public class LabelController {
             content = @Content(schema = @Schema(implementation = LabelDTO.class)))
     @PostMapping("")
     public ResponseEntity<LabelDTO> createLabel(@Valid @RequestBody LabelCreateDTO labelCreateDTO) {
-        LabelDTO labelDTO = labelService.createLabel(labelCreateDTO);
+        LabelDTO labelDTO = labelService.create(labelCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(labelDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<LabelDTO> updateLabelById(@PathVariable Long id,
                                                     @Valid @RequestBody LabelUpdateDTO labelUpdateDTO) {
-        LabelDTO labelDTO = labelService.updateLabel(id, labelUpdateDTO);
+        LabelDTO labelDTO = labelService.updateById(id, labelUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(labelDTO);
     }
 

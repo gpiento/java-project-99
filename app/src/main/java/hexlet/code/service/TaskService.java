@@ -31,14 +31,14 @@ public class TaskService {
 
     private final TaskSpecification taskSpecification;
 
-    public List<TaskDTO> getAllTasks(TaskParamsDTO taskParamsDTO, PageRequest pageRequest) {
+    public List<TaskDTO> getAll(TaskParamsDTO taskParamsDTO, PageRequest pageRequest) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
         return taskRepository.findAll(spec, pageRequest).stream()
                 .map(taskMapper::map)
                 .toList();
     }
 
-    public TaskDTO getTaskById(Long id) {
+    public TaskDTO getById(Long id) {
         Task task = findTaskById(id);
         return taskMapper.map(task);
     }

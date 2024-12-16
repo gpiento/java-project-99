@@ -31,7 +31,7 @@ public class TaskStatusController {
 
     @GetMapping("")
     public ResponseEntity<List<TaskStatusDTO>> getAllTaskStatuses() {
-        List<TaskStatusDTO> taskStatusDTO = taskStatusService.getAllTaskStatuses();
+        List<TaskStatusDTO> taskStatusDTO = taskStatusService.getAll();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(taskStatusDTO.size()))
                 .body(taskStatusDTO);
@@ -39,7 +39,7 @@ public class TaskStatusController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskStatusDTO> getTaskStatusById(@PathVariable Long id) {
-        TaskStatusDTO taskStatusDTO = taskStatusService.getTaskStatusById(id);
+        TaskStatusDTO taskStatusDTO = taskStatusService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(taskStatusDTO);
     }
 
@@ -47,7 +47,7 @@ public class TaskStatusController {
             content = @Content(schema = @Schema(implementation = TaskStatusDTO.class)))
     @PostMapping("")
     public ResponseEntity<TaskStatusDTO> createTaskStatus(@Valid @RequestBody TaskStatusCreateDTO taskStatusCreateDTO) {
-        TaskStatusDTO taskStatusDTO = taskStatusService.createTaskStatus(taskStatusCreateDTO);
+        TaskStatusDTO taskStatusDTO = taskStatusService.create(taskStatusCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(taskStatusDTO);
     }
 
@@ -56,7 +56,7 @@ public class TaskStatusController {
     public ResponseEntity<TaskStatusDTO> updateTaskStatusById(
             @PathVariable Long id,
             @Valid @RequestBody TaskStatusUpdateDTO taskStatusUpdateDTO) {
-        TaskStatusDTO taskStatusDTO = taskStatusService.updateTaskStatus(id, taskStatusUpdateDTO);
+        TaskStatusDTO taskStatusDTO = taskStatusService.updateById(id, taskStatusUpdateDTO);
         return ResponseEntity.status(HttpStatus.OK).body(taskStatusDTO);
     }
 

@@ -25,19 +25,19 @@ public class LabelService {
 
     private final LabelMapper labelMapper;
 
-    public List<LabelDTO> getAllLabels() {
+    public List<LabelDTO> getAll() {
         return labelRepository.findAll().stream()
                 .map(labelMapper::map)
                 .toList();
     }
 
-    public LabelDTO getLabelById(Long id) {
+    public LabelDTO getById(Long id) {
         Label label = findLabelById(id);
         return labelMapper.map(label);
     }
 
     @Transactional
-    public LabelDTO createLabel(LabelCreateDTO labelCreateDTO) {
+    public LabelDTO create(LabelCreateDTO labelCreateDTO) {
         if (labelRepository.existsByName(labelCreateDTO.getName())) {
             throw new ResourceAlreadyExistsException("Label with name '"
                     + labelCreateDTO.getName() + "' already exists");
@@ -49,7 +49,7 @@ public class LabelService {
     }
 
     @Transactional
-    public LabelDTO updateLabel(Long id, LabelUpdateDTO labelUpdateDTO) {
+    public LabelDTO updateById(Long id, LabelUpdateDTO labelUpdateDTO) {
         Label label = findLabelById(id);
         labelMapper.update(labelUpdateDTO, label);
         LOGGER.info("Updated label with id: {}", label.getId());

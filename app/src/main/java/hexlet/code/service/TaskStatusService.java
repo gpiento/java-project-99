@@ -25,19 +25,19 @@ public class TaskStatusService {
 
     private final TaskStatusMapper taskStatusMapper;
 
-    public List<TaskStatusDTO> getAllTaskStatuses() {
+    public List<TaskStatusDTO> getAll() {
         return taskStatusRepository.findAll().stream()
                 .map(taskStatusMapper::map)
                 .toList();
     }
 
-    public TaskStatusDTO getTaskStatusById(Long id) {
+    public TaskStatusDTO getById(Long id) {
         TaskStatus taskStatus = findTaskStatusById(id);
         return taskStatusMapper.map(taskStatus);
     }
 
     @Transactional
-    public TaskStatusDTO createTaskStatus(TaskStatusCreateDTO taskStatusCreateDTO) {
+    public TaskStatusDTO create(TaskStatusCreateDTO taskStatusCreateDTO) {
         if (taskStatusRepository.existsBySlug(taskStatusCreateDTO.getSlug())) {
             throw new ResourceAlreadyExistsException("Task status with slug '"
                     + taskStatusCreateDTO.getSlug() + "' already exists");
@@ -49,7 +49,7 @@ public class TaskStatusService {
     }
 
     @Transactional
-    public TaskStatusDTO updateTaskStatus(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
+    public TaskStatusDTO updateById(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
         TaskStatus taskStatus = findTaskStatusById(id);
         taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
         LOGGER.info("Updated task status with id: {}", id);

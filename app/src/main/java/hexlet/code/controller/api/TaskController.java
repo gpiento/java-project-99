@@ -35,7 +35,7 @@ public class TaskController {
     @GetMapping("")
     public ResponseEntity<List<TaskDTO>> getAllTasks(TaskParamsDTO taskParamsDTO,
                                                      @RequestParam(defaultValue = "1") Integer page) {
-        List<TaskDTO> taskDTOS = taskService.getAllTasks(taskParamsDTO, PageRequest.of(page - 1, 10));
+        List<TaskDTO> taskDTOS = taskService.getAll(taskParamsDTO, PageRequest.of(page - 1, 10));
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(taskDTOS.size()))
                 .body(taskDTOS);
@@ -43,7 +43,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
-        TaskDTO taskDTO = taskService.getTaskById(id);
+        TaskDTO taskDTO = taskService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(taskDTO);
     }
 

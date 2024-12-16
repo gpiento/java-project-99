@@ -26,19 +26,19 @@ public class UserService {
 
     private final UserMapper userMapper;
 
-    public List<UserDTO> getAllUsers() {
+    public List<UserDTO> getAll() {
         return userRepository.findAll().stream()
                 .map(userMapper::map)
                 .toList();
     }
 
-    public UserDTO getUserById(Long id) {
+    public UserDTO getById(Long id) {
         User user = findUserById(id);
         return userMapper.map(user);
     }
 
     @Transactional
-    public UserDTO createUser(UserCreateDTO userCreateDTO) {
+    public UserDTO create(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             LOGGER.info("User with email {} already exits", userCreateDTO.getEmail());
             throw new ResourceAlreadyExistsException("User with email '"

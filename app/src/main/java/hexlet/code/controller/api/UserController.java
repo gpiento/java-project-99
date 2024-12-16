@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> userDTOS = userService.getAllUsers();
+        List<UserDTO> userDTOS = userService.getAll();
         return ResponseEntity.ok()
                 .header("X-Total-Count", String.valueOf(userDTOS.size()))
                 .body(userDTOS);
@@ -39,7 +39,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        UserDTO userDTO = userService.getUserById(id);
+        UserDTO userDTO = userService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
             content = @Content(schema = @Schema(implementation = UserDTO.class)))
     @PostMapping("")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        UserDTO createUser = userService.createUser(userCreateDTO);
+        UserDTO createUser = userService.create(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createUser);
     }
 

@@ -27,6 +27,19 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 //@EnableSentry(dsn = "https://dcc135c20d90723b5db9ed3ede7eae02@o4507741689806848.ingest.de.sentry.io/4507741712416848")
 public class SecurityConfig {
 
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/api/public/**",
+            "/api/public/authenticate",
+            "/actuator/*"};
+
     private JwtDecoder jwtDecoder;
 
     private PasswordEncoder passwordEncoder;
@@ -46,8 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/index.html").permitAll()
                         .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs*/**").permitAll()
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer((rs) -> rs.jwt((jwt) -> jwt.decoder(jwtDecoder)))

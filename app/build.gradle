@@ -31,7 +31,7 @@ repositories {
 
 ext {
     springVersion = '6.2.1'
-    springBootVersion = '3.4.0'
+    springBootVersion = '3.3.6'
     springDataJpaVersion = '3.4.1'
     springSecurityTestVersion = '6.4.1'
     hibernateCoreVersion = '6.6.3.Final'

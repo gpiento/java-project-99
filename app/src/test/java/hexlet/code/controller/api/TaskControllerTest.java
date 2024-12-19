@@ -26,7 +26,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashSet;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -147,6 +149,10 @@ public class TaskControllerTest {
                     .andExpect(jsonPath("$.title").value(taskCreate.getTitle()))
                     .andExpect(jsonPath("$.content").value(taskCreate.getContent()))
                     .andExpect(jsonPath("$.status").value(testTaskStatus.getSlug()));
+
+            Task actualedTask = taskRepository.findByName(taskCreate.getTitle()).get();
+            assertNotNull(actualedTask);
+            assertThat(actualedTask.getName()).isEqualTo(taskCreate.getTitle());
         }
     }
 
@@ -184,6 +190,10 @@ public class TaskControllerTest {
                     .andExpect(jsonPath("$.createdAt").exists())
                     .andExpect(jsonPath("$.assignee_id").exists())
                     .andExpect(jsonPath("$.status").exists());
+
+            Task actualedTask = taskRepository.findByName(taskUpdateDTO.getTitle().get()).get();
+            assertNotNull(actualedTask);
+            assertThat(actualedTask.getName()).isEqualTo(taskUpdateDTO.getTitle().get());
         }
     }
 

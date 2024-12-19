@@ -14,7 +14,6 @@ Demo: https://java-project-99-by3y.onrender.com
 ### Requirements
 
 * Java 21
-* Gradle 8.7
 
 ### Usage
 
@@ -30,7 +29,6 @@ Open in browser: http://localhost:8080
 - Gradle Build Tool
 - Javalin web framework
 - Bootstrap framework
-- Template engine jte
 - SQL DB: H2, PostgresSQL
 - Junit
 - MockitoWebServer

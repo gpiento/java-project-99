@@ -19,7 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -126,6 +128,10 @@ public class LabelControllerTest {
                     .andExpect(jsonPath("$.id").exists())
                     .andExpect(jsonPath("$.name").value(createLabel.getName()))
                     .andExpect(jsonPath("$.createdAt").exists());
+
+            Label actualedLabel = labelRepository.findByName(createLabel.getName()).get();
+            assertNotNull(actualedLabel);
+            assertThat(actualedLabel.getName()).isEqualTo(createLabel.getName());
         }
     }
 
@@ -147,6 +153,10 @@ public class LabelControllerTest {
                     .andExpect(jsonPath("$.id").value(testLabel.getId()))
                     .andExpect(jsonPath("$.name").value(labelUpdateDTO.getName().get()))
                     .andExpect(jsonPath("$.createdAt").exists());
+
+            Label actualedLabel = labelRepository.findByName(labelUpdateDTO.getName().get()).get();
+            assertNotNull(actualedLabel);
+            assertThat(actualedLabel.getName()).isEqualTo(labelUpdateDTO.getName().get());
         }
     }
 

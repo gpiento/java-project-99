@@ -18,7 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -98,6 +100,10 @@ public class TaskStatusControllerTest {
                     .andExpect(jsonPath("$.name").value(createDTO.getName()))
                     .andExpect(jsonPath("$.slug").value(createDTO.getSlug()))
                     .andExpect(jsonPath("$.createdAt").exists());
+
+            TaskStatus actualedTaskStatus = taskStatusRepository.findBySlug(createDTO.getSlug()).get();
+            assertNotNull(actualedTaskStatus);
+            assertThat(actualedTaskStatus.getSlug()).isEqualTo(createDTO.getSlug());
         }
     }
 
@@ -118,6 +124,10 @@ public class TaskStatusControllerTest {
                     .andExpect(jsonPath("$.name").value(updateDTO.getName().get()))
                     .andExpect(jsonPath("$.slug").value(updateDTO.getSlug().get()))
                     .andExpect(jsonPath("$.createdAt").exists());
+
+            TaskStatus actualedTaskStatus = taskStatusRepository.findBySlug(updateDTO.getSlug().get()).get();
+            assertNotNull(actualedTaskStatus);
+            assertThat(actualedTaskStatus.getSlug()).isEqualTo(updateDTO.getSlug().get());
         }
     }
 

@@ -18,8 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.instancio.Select.field;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -113,6 +115,10 @@ public class UserControllerTest {
                     .andExpect(jsonPath("$.lastName").value(createUser.getLastName()))
                     .andExpect(jsonPath("$.createdAt").exists())
                     .andExpect(jsonPath("$.password").doesNotExist());
+
+            User actualedUser = userRepository.findByEmail(createUser.getEmail()).get();
+            assertNotNull(actualedUser);
+            assertThat(actualedUser.getEmail()).isEqualTo(createUser.getEmail());
         }
 
         @Test
@@ -159,6 +165,10 @@ public class UserControllerTest {
                     .andExpect(jsonPath("$.lastName").value(userUpdateDTO.getLastName().get()))
                     .andExpect(jsonPath("$.createdAt").exists())
                     .andExpect(jsonPath("$.password").doesNotExist());
+
+            User actualedUser = userRepository.findByEmail(userUpdateDTO.getEmail().get()).get();
+            assertNotNull(actualedUser);
+            assertThat(actualedUser.getEmail()).isEqualTo(userUpdateDTO.getEmail().get());
         }
     }
 

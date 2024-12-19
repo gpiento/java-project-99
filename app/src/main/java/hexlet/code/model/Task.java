@@ -15,7 +15,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -25,12 +28,16 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tasks")
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Task implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column(nullable = false)
@@ -45,10 +52,12 @@ public class Task implements BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     @JoinColumn(name = "task_status_id")
+    @ToString.Exclude
     private TaskStatus taskStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "assignee_id")
+    @ToString.Exclude
     private User assignee;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -56,6 +65,7 @@ public class Task implements BaseEntity {
             name = "tasks_labels",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
+    @ToString.Exclude
     private Set<Label> labels = new LinkedHashSet<>();
 
     @CreatedDate

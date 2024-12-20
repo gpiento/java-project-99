@@ -39,7 +39,8 @@ public class TaskService {
     }
 
     public TaskDTO getById(Long id) {
-        Task task = findTaskById(id);
+        Task task = taskRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Task with id '" + id + "' not found"));
         return taskMapper.map(task);
     }
 
@@ -57,7 +58,8 @@ public class TaskService {
 
     @Transactional
     public TaskDTO updateById(Long id, TaskUpdateDTO taskUpdateDTO) {
-        Task task = findTaskById(id);
+        Task task = taskRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Task with id '" + id + "' not found"));
         taskMapper.update(taskUpdateDTO, task);
         LOGGER.info("Updated task with id: {}", id);
         task = taskRepository.save(task);
@@ -66,14 +68,9 @@ public class TaskService {
 
     @Transactional
     public void deleteById(Long id) {
-        findTaskById(id);
+        taskRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Task with id '" + id + "' not found"));
         taskRepository.deleteById(id);
         LOGGER.info("Deleted task with id: {}", id);
-    }
-
-    private Task findTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task with id '"
-                        + id + "' not found"));
     }
 }

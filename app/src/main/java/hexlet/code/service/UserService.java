@@ -33,7 +33,8 @@ public class UserService {
     }
 
     public UserDTO getById(Long id) {
-        User user = findUserById(id);
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("User with id '" + id + "' not found"));
         return userMapper.map(user);
     }
 
@@ -53,7 +54,8 @@ public class UserService {
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public UserDTO updateById(Long id, UserUpdateDTO userUpdateDTO) {
-        User user = findUserById(id);
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("User with id '" + id + "' not found"));
         userMapper.update(userUpdateDTO, user);
         LOGGER.info("Updated user with id: {}", id);
         user = userRepository.save(user);
@@ -63,14 +65,9 @@ public class UserService {
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
     @Transactional
     public void deleteById(Long id) {
-        findUserById(id);
+        userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("User with id '" + id + "' not found"));
         userRepository.deleteById(id);
         LOGGER.info("Deleted user with id: {}", id);
-    }
-
-    private User findUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id '"
-                        + id + "' not found"));
     }
 }

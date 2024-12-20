@@ -10,13 +10,13 @@ import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
 import hexlet.code.specification.TaskSpecification;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,25 +52,30 @@ public class TaskService {
         }
         Task task = taskMapper.map(taskCreateDTO);
         task = taskRepository.save(task);
-        LOGGER.info("Task created with id: {}", task.getId());
+        LOGGER.info("Task created: {}", task);
         return taskMapper.map(task);
     }
 
     @Transactional
     public TaskDTO updateById(Long id, TaskUpdateDTO taskUpdateDTO) {
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task with id '" + id + "' not found"));
-        taskMapper.update(taskUpdateDTO, task);
-        LOGGER.info("Updated task with id: {}", id);
-        task = taskRepository.save(task);
-        return taskMapper.map(task);
+        return taskRepository.findById(id)
+                .map(task -> {
+                    taskMapper.update(taskUpdateDTO, task);
+                    LOGGER.info("Updated task: {}", task);
+                    return taskMapper.map(task);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Task with id '" + id + "' not found"));
     }
 
     @Transactional
     public void deleteById(Long id) {
-        taskRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task with id '" + id + "' not found"));
-        taskRepository.deleteById(id);
+        taskRepository.findById(id)
+                .ifPresentOrElse(
+                        taskRepository::delete,
+                        () -> {
+                            throw new ResourceNotFoundException("Task with id '" + id + "' not found");
+                        }
+                );
         LOGGER.info("Deleted task with id: {}", id);
     }
 }

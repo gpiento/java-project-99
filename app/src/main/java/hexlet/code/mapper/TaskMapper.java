@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
         uses = {JsonNullableMapper.class,
                 ReferenceMapper.class})
 public abstract class TaskMapper {
-
     @Autowired
     private TaskStatusRepository taskStatusRepository;
     @Autowired

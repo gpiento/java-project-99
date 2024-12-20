@@ -53,11 +53,13 @@ public class Task implements BaseEntity {
     @NotNull
     @JoinColumn(name = "task_status_id")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private TaskStatus taskStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "assignee_id")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User assignee;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -66,6 +68,7 @@ public class Task implements BaseEntity {
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Label> labels = new LinkedHashSet<>();
 
     @CreatedDate

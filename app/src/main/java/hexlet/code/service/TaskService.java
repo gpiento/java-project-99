@@ -73,6 +73,7 @@ public class TaskService {
 
     private Task findTaskById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task with id '" + id + "' not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task with id '"
+                        + id + "' not found"));
     }
 }

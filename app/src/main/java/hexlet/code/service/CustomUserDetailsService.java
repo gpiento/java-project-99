@@ -39,6 +39,7 @@ public class CustomUserDetailsService implements UserDetailsManager {
         newUser.setEmail(userData.getUsername());
         newUser.setPasswordDigest(passwordEncoder.encode(userData.getPassword()));
         userRepository.save(newUser);
+
     }
 
     @Override

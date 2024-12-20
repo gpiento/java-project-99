@@ -66,6 +66,7 @@ public class LabelService {
 
     private Label findLabelById(Long id) {
         return labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Label with id '" + id + "' not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Label with id '"
+                        + id + "' not found"));
     }
 }

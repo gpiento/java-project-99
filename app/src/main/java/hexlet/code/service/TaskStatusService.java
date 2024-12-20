@@ -66,6 +66,7 @@ public class TaskStatusService {
 
     private TaskStatus findTaskStatusById(Long id) {
         return taskStatusRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '" + id + "' not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '"
+                        + id + "' not found"));
     }
 }

@@ -8,11 +8,11 @@ import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.TaskStatusMapper;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,12 +25,14 @@ public class TaskStatusService {
 
     private final TaskStatusMapper taskStatusMapper;
 
+    @Transactional(readOnly = true)
     public List<TaskStatusDTO> getAll() {
         return taskStatusRepository.findAll().stream()
                 .map(taskStatusMapper::map)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public TaskStatusDTO getById(Long id) {
         TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task status with id '" + id + "' not found"));
@@ -51,19 +53,27 @@ public class TaskStatusService {
 
     @Transactional
     public TaskStatusDTO updateById(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with id '" + id + "' not found"));
-        taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
-        LOGGER.info("Updated task status with id: {}", id);
-        taskStatus = taskStatusRepository.save(taskStatus);
-        return taskStatusMapper.map(taskStatus);
+        return taskStatusRepository.findById(id)
+                .map(taskStatus -> {
+                            LOGGER.info("Updated task status: {}", taskStatus);
+                            taskStatusMapper.update(taskStatusUpdateDTO, taskStatus);
+                            return taskStatusMapper.map(taskStatus);
+                        }
+                )
+                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '" + id + "' not found"));
     }
 
     @Transactional
     public void deleteById(Long id) {
-        taskStatusRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with id '" + id + "' not found"));
-        taskStatusRepository.deleteById(id);
-        LOGGER.info("Deleted task status with id: {}", id);
+        taskStatusRepository.findById(id)
+                .ifPresentOrElse(
+                        taskStatus -> {
+                            LOGGER.info("Deleted task status with id: {}", id);
+                            taskStatusRepository.deleteById(id);
+                        },
+                        () -> {
+                            throw new ResourceNotFoundException("Task status with id '" + id + "' not found");
+                        }
+                );
     }
 }

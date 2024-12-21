@@ -31,6 +31,7 @@ public class TaskService {
 
     private final TaskSpecification taskSpecification;
 
+    @Transactional(readOnly = true)
     public List<TaskDTO> getAll(TaskParamsDTO taskParamsDTO, PageRequest pageRequest) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
         return taskRepository.findAll(spec, pageRequest).stream()
@@ -38,6 +39,7 @@ public class TaskService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public TaskDTO getById(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task with id '" + id + "' not found"));
@@ -60,8 +62,8 @@ public class TaskService {
     public TaskDTO updateById(Long id, TaskUpdateDTO taskUpdateDTO) {
         return taskRepository.findById(id)
                 .map(task -> {
-                    taskMapper.update(taskUpdateDTO, task);
                     LOGGER.info("Updated task: {}", task);
+                    taskMapper.update(taskUpdateDTO, task);
                     return taskMapper.map(task);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Task with id '" + id + "' not found"));
@@ -71,11 +73,13 @@ public class TaskService {
     public void deleteById(Long id) {
         taskRepository.findById(id)
                 .ifPresentOrElse(
-                        taskRepository::delete,
+                        task -> {
+                            LOGGER.info("Deleted task with id: {}", id);
+                            taskRepository.delete(task);
+                        },
                         () -> {
                             throw new ResourceNotFoundException("Task with id '" + id + "' not found");
                         }
                 );
-        LOGGER.info("Deleted task with id: {}", id);
     }
 }

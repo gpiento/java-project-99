@@ -4,8 +4,8 @@ import hexlet.code.dto.task.TaskCreateDTO;
 import hexlet.code.dto.task.TaskDTO;
 import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
-import hexlet.code.exception.ResourceAlreadyExistsException;
-import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.exception.TaskAlreadyExistsException;
+import hexlet.code.exception.TaskNotFoundException;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
@@ -41,16 +41,15 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public TaskDTO getById(Long id) {
-        Task task = taskRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task with id '" + id + "' not found"));
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException(id));
         return taskMapper.map(task);
     }
 
     @Transactional
     public TaskDTO create(TaskCreateDTO taskCreateDTO) {
         if (taskRepository.existsByName(taskCreateDTO.getTitle())) {
-            throw new ResourceAlreadyExistsException("Task with name '"
-                    + taskCreateDTO.getTitle() + "' already exists");
+            throw new TaskAlreadyExistsException(taskCreateDTO.getTitle());
         }
         Task task = taskMapper.map(taskCreateDTO);
         task = taskRepository.save(task);
@@ -66,7 +65,7 @@ public class TaskService {
                     taskMapper.update(taskUpdateDTO, task);
                     return taskMapper.map(task);
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Task with id '" + id + "' not found"));
+                .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     @Transactional
@@ -74,11 +73,11 @@ public class TaskService {
         taskRepository.findById(id)
                 .ifPresentOrElse(
                         task -> {
-                            LOGGER.info("Deleted task with id: {}", id);
                             taskRepository.delete(task);
+                            LOGGER.info("Deleted task with id: {}", id);
                         },
                         () -> {
-                            throw new ResourceNotFoundException("Task with id '" + id + "' not found");
+                            throw new TaskNotFoundException(id);
                         }
                 );
     }

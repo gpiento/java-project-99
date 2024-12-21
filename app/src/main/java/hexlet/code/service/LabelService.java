@@ -3,8 +3,8 @@ package hexlet.code.service;
 import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.label.LabelDTO;
 import hexlet.code.dto.label.LabelUpdateDTO;
-import hexlet.code.exception.ResourceAlreadyExistsException;
-import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.exception.LabelAlreadyExistsException;
+import hexlet.code.exception.LabelNotFoundException;
 import hexlet.code.mapper.LabelMapper;
 import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
@@ -34,16 +34,15 @@ public class LabelService {
 
     @Transactional(readOnly = true)
     public LabelDTO getById(Long id) {
-        Label label = labelRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Label with id '" + id + "' not found"));
+        Label label = labelRepository.findById(id)
+                .orElseThrow(() -> new LabelNotFoundException(id));
         return labelMapper.map(label);
     }
 
     @Transactional
     public LabelDTO create(LabelCreateDTO labelCreateDTO) {
         if (labelRepository.existsByName(labelCreateDTO.getName())) {
-            throw new ResourceAlreadyExistsException("Label with name '"
-                    + labelCreateDTO.getName() + "' already exists");
+            throw new LabelAlreadyExistsException(labelCreateDTO.getName());
         }
         Label label = labelMapper.map(labelCreateDTO);
         label = labelRepository.save(label);
@@ -60,7 +59,7 @@ public class LabelService {
                             return labelMapper.map(label);
                         }
                 )
-                .orElseThrow(() -> new ResourceNotFoundException("Label with id '" + id + "' not found"));
+                .orElseThrow(() -> new LabelNotFoundException(id));
     }
 
     @Transactional
@@ -68,11 +67,11 @@ public class LabelService {
         labelRepository.findById(id)
                 .ifPresentOrElse(
                         label -> {
-                            LOGGER.info("Deleted label with id: {}", id);
                             labelRepository.deleteById(id);
+                            LOGGER.info("Deleted label with id: {}", id);
                         },
                         () -> {
-                            throw new ResourceNotFoundException("Label with id '" + id + "' not found");
+                            throw new LabelNotFoundException(id);
                         }
                 );
     }

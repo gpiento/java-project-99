@@ -1,11 +1,10 @@
 package hexlet.code.exception;
 
 public class UserAlreadyExistsException extends RuntimeException {
-    public UserAlreadyExistsException(String message) {
-        super(message);
-    }
 
-    public UserAlreadyExistsException(String message, Object... args) {
-        super(String.format(message, args));
+    private static final String DEFAULT_MESSAGE = "User with email '%s' already exits";
+
+    public UserAlreadyExistsException(String email) {
+        super(String.format(DEFAULT_MESSAGE, email));
     }
 }

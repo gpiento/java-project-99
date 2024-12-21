@@ -3,8 +3,8 @@ package hexlet.code.service;
 import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
 import hexlet.code.dto.taskstatus.TaskStatusDTO;
 import hexlet.code.dto.taskstatus.TaskStatusUpdateDTO;
-import hexlet.code.exception.ResourceAlreadyExistsException;
-import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.exception.TaskStatusAlreadyExistsException;
+import hexlet.code.exception.TaskStatusNotFoundException;
 import hexlet.code.mapper.TaskStatusMapper;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
@@ -34,16 +34,15 @@ public class TaskStatusService {
 
     @Transactional(readOnly = true)
     public TaskStatusDTO getById(Long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Task status with id '" + id + "' not found"));
+        TaskStatus taskStatus = taskStatusRepository.findById(id)
+                .orElseThrow(() -> new TaskStatusNotFoundException(id));
         return taskStatusMapper.map(taskStatus);
     }
 
     @Transactional
     public TaskStatusDTO create(TaskStatusCreateDTO taskStatusCreateDTO) {
         if (taskStatusRepository.existsBySlug(taskStatusCreateDTO.getSlug())) {
-            throw new ResourceAlreadyExistsException("Task status with slug '"
-                    + taskStatusCreateDTO.getSlug() + "' already exists");
+            throw new TaskStatusAlreadyExistsException(taskStatusCreateDTO.getSlug());
         }
         TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
         taskStatus = taskStatusRepository.save(taskStatus);
@@ -60,7 +59,7 @@ public class TaskStatusService {
                             return taskStatusMapper.map(taskStatus);
                         }
                 )
-                .orElseThrow(() -> new ResourceNotFoundException("Task status with id '" + id + "' not found"));
+                .orElseThrow(() -> new TaskStatusNotFoundException(id));
     }
 
     @Transactional
@@ -68,11 +67,11 @@ public class TaskStatusService {
         taskStatusRepository.findById(id)
                 .ifPresentOrElse(
                         taskStatus -> {
-                            LOGGER.info("Deleted task status with id: {}", id);
                             taskStatusRepository.deleteById(id);
+                            LOGGER.info("Deleted task status with id: {}", id);
                         },
                         () -> {
-                            throw new ResourceNotFoundException("Task status with id '" + id + "' not found");
+                            throw new TaskStatusNotFoundException(id);
                         }
                 );
     }

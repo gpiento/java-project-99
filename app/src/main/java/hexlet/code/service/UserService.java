@@ -3,8 +3,8 @@ package hexlet.code.service;
 import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.dto.user.UserDTO;
 import hexlet.code.dto.user.UserUpdateDTO;
-import hexlet.code.exception.ResourceAlreadyExistsException;
-import hexlet.code.exception.ResourceNotFoundException;
+import hexlet.code.exception.UserAlreadyExistsException;
+import hexlet.code.exception.UserNotFoundException;
 import hexlet.code.mapper.UserMapper;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
@@ -36,7 +36,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDTO getById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("User with id '" + id + "' not found"));
+                new UserNotFoundException(id));
         return userMapper.map(user);
     }
 
@@ -44,8 +44,7 @@ public class UserService {
     public UserDTO create(UserCreateDTO userCreateDTO) {
         if (userRepository.existsByEmail(userCreateDTO.getEmail())) {
             LOGGER.info("User with email {} already exits", userCreateDTO.getEmail());
-            throw new ResourceAlreadyExistsException("User with email '"
-                    + userCreateDTO.getEmail() + "' already exists");
+            throw new UserAlreadyExistsException(userCreateDTO.getEmail());
         }
         User user = userMapper.map(userCreateDTO);
         user = userRepository.save(user);
@@ -62,7 +61,7 @@ public class UserService {
                     userMapper.update(userUpdateDTO, user);
                     return userMapper.map(user);
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("User with id '" + id + "' not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @PreAuthorize("@userUtils.isCurrentUser(#id)")
@@ -71,11 +70,11 @@ public class UserService {
         userRepository.findById(id)
                 .ifPresentOrElse(
                         user -> {
-                            LOGGER.info("Deleted user with id: {}", id);
                             userRepository.deleteById(id);
+                            LOGGER.info("Deleted user with id: {}", id);
                         },
                         () -> {
-                            throw new ResourceNotFoundException("User with id '" + id + "' not found");
+                            throw new UserNotFoundException(id);
                         });
     }
 }

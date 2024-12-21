@@ -11,6 +11,7 @@ import hexlet.code.repository.LabelRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class LabelService {
 
     private final LabelMapper labelMapper;
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional(readOnly = true)
     public List<LabelDTO> getAll() {
         return labelRepository.findAll().stream()
@@ -32,6 +34,7 @@ public class LabelService {
                 .toList();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional(readOnly = true)
     public LabelDTO getById(Long id) {
         Label label = labelRepository.findById(id)
@@ -39,6 +42,7 @@ public class LabelService {
         return labelMapper.map(label);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public LabelDTO create(LabelCreateDTO labelCreateDTO) {
         if (labelRepository.existsByName(labelCreateDTO.getName())) {
@@ -50,6 +54,7 @@ public class LabelService {
         return labelMapper.map(label);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public LabelDTO updateById(Long id, LabelUpdateDTO labelUpdateDTO) {
         return labelRepository.findById(id)
@@ -62,6 +67,7 @@ public class LabelService {
                 .orElseThrow(() -> new LabelNotFoundException(id));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void deleteById(Long id) {
         labelRepository.findById(id)

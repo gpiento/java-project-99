@@ -7,4 +7,8 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long id) {
         super(String.format(DEFAULT_MESSAGE, id));
     }
+
+    public UserNotFoundException(String message) {
+        super(message);
+    }
 }

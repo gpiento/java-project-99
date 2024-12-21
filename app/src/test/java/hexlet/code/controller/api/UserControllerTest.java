@@ -70,6 +70,19 @@ public class UserControllerTest {
         }
 
         @Test
+        @DisplayName("should return empty list when no users exist")
+        public void getAllUsersNoUsersShouldReturnEmptyList() throws Exception {
+            userRepository.deleteAll();
+            mockMvc.perform(get("/api/users")
+                            .with(token))
+                    .andExpectAll(
+                            status().isOk(),
+                            content().contentType(MediaType.APPLICATION_JSON),
+                            jsonPath("$").isEmpty()
+                    );
+        }
+
+        @Test
         @DisplayName("should return user by id")
         public void getUserByIdSuccess() throws Exception {
             testUser = userRepository.save(testUser);
@@ -100,8 +113,8 @@ public class UserControllerTest {
     @DisplayName("POST /api/users")
     class CreateUser {
         @Test
-        @DisplayName("should create user")
-        public void createUser() throws Exception {
+        @DisplayName("should create user with valid data")
+        public void createUserWithValidData() throws Exception {
             UserCreateDTO createUser = Instancio.of(generator.getUserCreateDTOModel()).create();
             mockMvc.perform(post("/api/users")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -122,8 +135,24 @@ public class UserControllerTest {
         }
 
         @Test
-        @DisplayName("should return bad request")
-        public void createUserInvalidEmail() throws Exception {
+        @DisplayName("should return bad request when email already exists")
+        public void createUserDuplicateEmailShouldReturnBadRequest() throws Exception {
+            User user = Instancio.of(generator.getUserModel()).create();
+            userRepository.save(user);
+
+            UserCreateDTO createUser = Instancio.of(generator.getUserCreateDTOModel()).create();
+            createUser.setEmail(user.getEmail());
+
+            mockMvc.perform(post("/api/users")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createUser))
+                            .with(token))
+                    .andExpect(status().isConflict());
+        }
+
+        @Test
+        @DisplayName("should return bad request for invalid email")
+        public void shouldReturnBadRequestForInvalidEmail() throws Exception {
             UserCreateDTO invalidUser = Instancio.of(generator.getUserCreateDTOModel())
                     .set(field(UserCreateDTO::getEmail), "invalid-email")
                     .create();
@@ -135,8 +164,8 @@ public class UserControllerTest {
         }
 
         @Test
-        @DisplayName("should return bad request")
-        public void createUserEmptyFields() throws Exception {
+        @DisplayName("should return bad request for empty fields")
+        public void shouldReturnBadRequestForEmptyFields() throws Exception {
             mockMvc.perform(post("/api/users")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(new UserCreateDTO()))
@@ -150,7 +179,7 @@ public class UserControllerTest {
     class UpdateUser {
         @Test
         @DisplayName("should update user")
-        public void updateUserById() throws Exception {
+        public void shouldUpdateUserById() throws Exception {
             testUser = userRepository.save(testUser);
             UserUpdateDTO userUpdateDTO = Instancio.of(generator.getUserUpdateDTOModel()).create();
             mockMvc.perform(put("/api/users/{id}", testUser.getId())
@@ -177,7 +206,7 @@ public class UserControllerTest {
     class DeleteUser {
         @Test
         @DisplayName("should delete user")
-        public void deleteUser() throws Exception {
+        public void shouldDeleteUserById() throws Exception {
             testUser = userRepository.save(testUser);
             mockMvc.perform(get("/api/users/{id}", testUser.getId())
                             .with(token))

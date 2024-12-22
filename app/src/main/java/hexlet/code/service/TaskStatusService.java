@@ -11,6 +11,7 @@ import hexlet.code.repository.TaskStatusRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ public class TaskStatusService {
         return taskStatusMapper.map(taskStatus);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public TaskStatusDTO create(TaskStatusCreateDTO taskStatusCreateDTO) {
         if (taskStatusRepository.existsBySlug(taskStatusCreateDTO.getSlug())) {
@@ -46,10 +48,11 @@ public class TaskStatusService {
         }
         TaskStatus taskStatus = taskStatusMapper.map(taskStatusCreateDTO);
         taskStatus = taskStatusRepository.save(taskStatus);
-        LOGGER.info("Created task status with id: {}", taskStatus.getId());
+        LOGGER.info("Created task status with id: {}", taskStatus);
         return taskStatusMapper.map(taskStatus);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public TaskStatusDTO updateById(Long id, TaskStatusUpdateDTO taskStatusUpdateDTO) {
         return taskStatusRepository.findById(id)
@@ -62,6 +65,7 @@ public class TaskStatusService {
                 .orElseThrow(() -> new TaskStatusNotFoundException(id));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @Transactional
     public void deleteById(Long id) {
         taskStatusRepository.findById(id)

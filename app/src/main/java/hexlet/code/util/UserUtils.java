@@ -24,7 +24,7 @@ public class UserUtils {
         }
         String email = authentication.getName();
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found"));
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     public boolean isCurrentUser(Long id) {

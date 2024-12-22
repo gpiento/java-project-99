@@ -10,16 +10,11 @@ import org.openapitools.jackson.nullable.JsonNullable;
 @Setter
 public class TaskStatusUpdateDTO {
 
-    @NotBlank
-    @Size(min = 1)
+    @NotBlank(message = "Name is required")
+    @Size(min = 1, message = "Name must be at least 1 character long")
     private JsonNullable<String> name;
 
-    @NotBlank
-    @Size(min = 1)
+    @NotBlank(message = "Slug is required")
+    @Size(min = 1, message = "Slug must be at least 1 character long")
     private JsonNullable<String> slug;
-
-    public TaskStatusUpdateDTO(JsonNullable<String> name, JsonNullable<String> slug) {
-        this.name = name;
-        this.slug = slug;
-    }
 }

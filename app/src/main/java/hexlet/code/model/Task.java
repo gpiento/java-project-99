@@ -19,18 +19,19 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "tasks")
 @Getter
 @Setter
-@EqualsAndHashCode
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public class Task implements BaseEntity {
@@ -45,21 +46,22 @@ public class Task implements BaseEntity {
     @Size(min = 1)
     private String name;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Integer index;
 
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @NotNull
+    @NotNull(message = "TaskStatus is required")
     @JoinColumn(name = "task_status_id")
-    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private TaskStatus taskStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "assignee_id")
-    @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User assignee;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -67,10 +69,35 @@ public class Task implements BaseEntity {
             name = "tasks_labels",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
-    @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Label> labels = new LinkedHashSet<>();
 
     @CreatedDate
     private LocalDate createdAt;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        Class<?> oEffectiveClass = o instanceof HibernateProxy proxy
+                ? proxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy proxy
+                ? proxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) {
+            return false;
+        }
+        Task task = (Task) o;
+        return getId() != null && Objects.equals(getId(), task.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy proxy
+                ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
 }

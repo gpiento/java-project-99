@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,7 +28,6 @@ public class Label implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column(unique = true)
@@ -48,9 +46,11 @@ public class Label implements BaseEntity {
             return false;
         }
         Class<?> oEffectiveClass = o instanceof HibernateProxy proxy
-                ? proxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+                ? proxy.getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy proxy
-                ? proxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+                ? proxy.getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
@@ -61,6 +61,7 @@ public class Label implements BaseEntity {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy proxy
-                ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+                ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
     }
 }

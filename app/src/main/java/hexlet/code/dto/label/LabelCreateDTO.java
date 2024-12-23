@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LabelCreateDTO {
 
-    @Size(min = 3, max = 1000)
+    @Size(min = 3, max = 1000, message = "Must be between 3 and 1000 characters")
     private String name;
 }

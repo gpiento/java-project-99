@@ -9,6 +9,6 @@ import org.openapitools.jackson.nullable.JsonNullable;
 @Setter
 public class LabelUpdateDTO {
 
-    @Size(min = 3, max = 1000)
+    @Size(min = 3, max = 1000, message = "Must be between 3 and 1000 characters")
     private JsonNullable<String> name;
 }

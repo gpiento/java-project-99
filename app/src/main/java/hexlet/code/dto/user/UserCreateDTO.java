@@ -22,7 +22,7 @@ public class UserCreateDTO {
 
     private String lastName;
 
-    @NotBlank
-    @Size(min = 3, max = 100)
+    @NotBlank(message = "Password is required")
+    @Size(min = 3, max = 100, message = "Must be between 3 and 100 characters")
     private String password;
 }

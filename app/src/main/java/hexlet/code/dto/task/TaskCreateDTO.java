@@ -19,7 +19,7 @@ public class TaskCreateDTO {
 
     private JsonNullable<Integer> index;
 
-    @Size(min = 1)
+    @Size(min = 1, message = "Must be at least 1 character long")
     @NotBlank
     private String title;
 

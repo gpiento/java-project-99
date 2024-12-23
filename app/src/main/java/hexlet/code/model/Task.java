@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -38,7 +37,6 @@ public class Task implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column(nullable = false)
@@ -46,7 +44,6 @@ public class Task implements BaseEntity {
     @Size(min = 1)
     private String name;
 
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Integer index;
 
@@ -55,12 +52,10 @@ public class Task implements BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @NotNull(message = "TaskStatus is required")
     @JoinColumn(name = "task_status_id")
-    @EqualsAndHashCode.Exclude
     private TaskStatus taskStatus;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "assignee_id")
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User assignee;
 
@@ -69,7 +64,6 @@ public class Task implements BaseEntity {
             name = "tasks_labels",
             joinColumns = @JoinColumn(name = "task_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id"))
-    @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Label> labels = new LinkedHashSet<>();
 
@@ -85,9 +79,11 @@ public class Task implements BaseEntity {
             return false;
         }
         Class<?> oEffectiveClass = o instanceof HibernateProxy proxy
-                ? proxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+                ? proxy.getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy proxy
-                ? proxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+                ? proxy.getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) {
             return false;
         }
@@ -98,6 +94,7 @@ public class Task implements BaseEntity {
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy proxy
-                ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+                ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
     }
 }

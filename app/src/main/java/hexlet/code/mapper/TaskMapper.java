@@ -39,16 +39,16 @@ public abstract class TaskMapper {
         return labels.stream().map(Label::getId).collect(Collectors.toSet());
     }
 
-    @Named("labelsFromIds")
-    public Set<Label> labelsFromIds(Set<Long> labels) {
+    @Named("getLabelIds")
+    public Set<Label> getLabelIds(Set<Long> labels) {
         return labelRepository.findAllById(labels).stream()
                 .collect(LinkedHashSet::new, Set::add, Set::addAll);
     }
 
-    @Named("idsFromLabels")
-    public Set<Label> idsFromLabels(JsonNullable<Set<Long>> ids) {
+    @Named("getLabelsByIds")
+    public Set<Label> getLabelsByIds(JsonNullable<Set<Long>> ids) {
         if (ids.isPresent() && ids.get() != null) {
-            return labelsFromIds(ids.get());
+            return getLabelIds(ids.get());
         }
         return null;
     }
@@ -70,13 +70,13 @@ public abstract class TaskMapper {
     @Mapping(target = "description", source = "content")
     @Mapping(target = "taskStatus", source = "status", qualifiedByName = "taskStatusFromSlug")
     @Mapping(target = "assignee", source = "assigneeId")
-    @Mapping(target = "labels", source = "taskLabelIds", qualifiedByName = "idsFromLabels")
+    @Mapping(target = "labels", source = "taskLabelIds", qualifiedByName = "getLabelsByIds")
     public abstract Task map(TaskCreateDTO dto);
 
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "taskStatus.slug", source = "status")
-    @Mapping(target = "labels", source = "taskLabelIds", qualifiedByName = "labelsFromIds")
+    @Mapping(target = "taskStatus", source = "status", qualifiedByName = "taskStatusFromSlug")
+    @Mapping(target = "labels", source = "taskLabelIds", qualifiedByName = "getLabelIds")
     @Mapping(target = "assignee", source = "assigneeId")
     public abstract void update(TaskUpdateDTO dto, @MappingTarget Task model);
 }

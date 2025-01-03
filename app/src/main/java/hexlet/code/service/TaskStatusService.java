@@ -35,9 +35,9 @@ public class TaskStatusService {
 
     @Transactional(readOnly = true)
     public TaskStatusDTO getById(Long id) {
-        TaskStatus taskStatus = taskStatusRepository.findById(id)
+        return taskStatusRepository.findById(id)
+                .map(taskStatusMapper::map)
                 .orElseThrow(() -> new TaskStatusNotFoundException(id));
-        return taskStatusMapper.map(taskStatus);
     }
 
     @PreAuthorize("isAuthenticated()")

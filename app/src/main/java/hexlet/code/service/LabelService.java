@@ -37,9 +37,9 @@ public class LabelService {
     @PreAuthorize("isAuthenticated()")
     @Transactional(readOnly = true)
     public LabelDTO getById(Long id) {
-        Label label = labelRepository.findById(id)
+        return labelRepository.findById(id)
+                .map(labelMapper::map)
                 .orElseThrow(() -> new LabelNotFoundException(id));
-        return labelMapper.map(label);
     }
 
     @PreAuthorize("isAuthenticated()")

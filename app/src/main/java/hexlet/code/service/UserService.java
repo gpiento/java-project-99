@@ -35,9 +35,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDTO getById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() ->
-                new UserNotFoundException(id));
-        return userMapper.map(user);
+        return userRepository.findById(id)
+                .map(userMapper::map)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Transactional

@@ -42,9 +42,9 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public TaskDTO getById(Long id) {
-        Task task = taskRepository.findById(id)
+        return taskRepository.findById(id)
+                .map(taskMapper::map)
                 .orElseThrow(() -> new TaskNotFoundException(id));
-        return taskMapper.map(task);
     }
 
     @Transactional

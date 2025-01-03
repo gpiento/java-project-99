@@ -67,7 +67,7 @@ dependencies {
 //    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
 //    implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
-0
+    0
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -125,6 +125,12 @@ test {
     finalizedBy jacocoTestReport // report is always generated after tests run
     maxParallelForks = Runtime.runtime.availableProcessors()
     forkEvery = 1
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+        exceptionFormat = "full"
+    }
 }
 
 jacocoTestReport {
@@ -132,9 +138,9 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
-    additionalSourceDirs.setFrom files("build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
-    sourceDirectories.setFrom files("src/main/java")
-    classDirectories.setFrom files("build/classes/java/main")
+//    additionalSourceDirs.setFrom files("build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
+//    sourceDirectories.setFrom files("src/main/java")
+//    classDirectories.setFrom files("build/classes/java/main")
 //    additionalSourceDirs.setFrom files("app/build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
 }
 

@@ -6,9 +6,11 @@ import hexlet.code.dto.task.TaskParamsDTO;
 import hexlet.code.dto.task.TaskUpdateDTO;
 import hexlet.code.exception.TaskAlreadyExistsException;
 import hexlet.code.exception.TaskNotFoundException;
+import hexlet.code.exception.TaskStatusNotFoundException;
 import hexlet.code.mapper.TaskMapper;
 import hexlet.code.model.Task;
 import hexlet.code.repository.TaskRepository;
+import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.specification.TaskSpecification;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -32,6 +34,8 @@ public class TaskService {
 
     private final TaskSpecification taskSpecification;
 
+    private final TaskStatusRepository taskStatusRepository;
+
     @Transactional(readOnly = true)
     public List<TaskDTO> getAll(TaskParamsDTO taskParamsDTO, PageRequest pageRequest) {
         Specification<Task> spec = taskSpecification.build(taskParamsDTO);
@@ -53,6 +57,10 @@ public class TaskService {
             throw new TaskAlreadyExistsException(taskCreateDTO.getTitle());
         }
         Task task = taskMapper.map(taskCreateDTO);
+        if (taskCreateDTO.getStatus() == null || !taskCreateDTO.getStatus().isPresent()) {
+            task.setTaskStatus(taskStatusRepository.findBySlug("draft")
+                    .orElseThrow(() -> new TaskStatusNotFoundException("draft")));
+        }
         task = taskRepository.save(task);
         LOGGER.info("Task created: {}", task);
         return taskMapper.map(task);

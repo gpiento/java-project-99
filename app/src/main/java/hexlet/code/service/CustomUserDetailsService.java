@@ -33,6 +33,10 @@ public class CustomUserDetailsService implements UserDetailsManager {
         if (userRepository.findByEmail(userData.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException(userData.getUsername());
         }
+        if (userData.getPassword() == null) {
+            throw new IllegalArgumentException("Password cannot be null"); //  <-  Добавляем проверку
+        }
+
         User newUser = new User();
         newUser.setEmail(userData.getUsername());
         newUser.setPasswordDigest(passwordEncoder.encode(userData.getPassword()));

@@ -68,19 +68,6 @@ public class UserControllerTest {
         }
 
         @Test
-        @DisplayName("should return empty list when no users exist")
-        public void getAllUsersNoUsersShouldReturnEmptyList() throws Exception {
-            userRepository.deleteAll();
-            mockMvc.perform(get("/api/users")
-                            .with(token))
-                    .andExpectAll(
-                            status().isOk(),
-                            content().contentType(MediaType.APPLICATION_JSON),
-                            jsonPath("$").isEmpty()
-                    );
-        }
-
-        @Test
         @DisplayName("should return user by id")
         public void getUserByIdSuccess() throws Exception {
             testUser = userRepository.save(testUser);

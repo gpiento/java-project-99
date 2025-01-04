@@ -43,7 +43,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private final LabelService labelService;
 
-    private final DefaultUserProperties defaultUserProperties;
+//    private final DefaultUserProperties defaultUserProperties;
 
     private final UserService userService;
 
@@ -56,10 +56,11 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void createUserIfNotExists() {
-        if (userRepository.findByEmail(defaultUserProperties.getEmail()).isEmpty()) {
+        // TODO try use DefaultUserProperties
+        if (userRepository.findByEmail("hexlet@example.com").isEmpty()) {
             UserCreateDTO userCreateDTO = new UserCreateDTO();
-            userCreateDTO.setEmail(defaultUserProperties.getEmail());
-            userCreateDTO.setPassword(defaultUserProperties.getPassword());
+            userCreateDTO.setEmail("hexlet@example.com");
+            userCreateDTO.setPassword("qwerty");
             userService.create(userCreateDTO);
         }
     }

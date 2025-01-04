@@ -69,7 +69,7 @@ dependencies {
 //    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
 //    implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
-    0
+
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"

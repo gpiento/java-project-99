@@ -2,13 +2,13 @@ package hexlet.code.component;
 
 import hexlet.code.dto.label.LabelCreateDTO;
 import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
-import hexlet.code.model.User;
+import hexlet.code.dto.user.UserCreateDTO;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
-import hexlet.code.service.CustomUserDetailsService;
 import hexlet.code.service.LabelService;
 import hexlet.code.service.TaskStatusService;
+import hexlet.code.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -33,8 +33,6 @@ public class DataInitializer implements ApplicationRunner {
             "bug",
             "feature");
 
-    private final CustomUserDetailsService customUserDetailsService;
-
     private final TaskStatusRepository taskStatusRepository;
 
     private final LabelRepository labelRepository;
@@ -47,6 +45,8 @@ public class DataInitializer implements ApplicationRunner {
 
     private final DefaultUserProperties defaultUserProperties;
 
+    private final UserService userService;
+
     @Override
     public void run(ApplicationArguments args) {
 
@@ -57,10 +57,10 @@ public class DataInitializer implements ApplicationRunner {
 
     private void createUserIfNotExists() {
         if (userRepository.findByEmail(defaultUserProperties.getEmail()).isEmpty()) {
-            User user = new User();
-            user.setEmail(defaultUserProperties.getEmail());
-            user.setPasswordDigest(defaultUserProperties.getPassword());
-            customUserDetailsService.createUser(user);
+            UserCreateDTO userCreateDTO = new UserCreateDTO();
+            userCreateDTO.setEmail(defaultUserProperties.getEmail());
+            userCreateDTO.setPassword(defaultUserProperties.getPassword());
+            userService.create(userCreateDTO);
         }
     }
 

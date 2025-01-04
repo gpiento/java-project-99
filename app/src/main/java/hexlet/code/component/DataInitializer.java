@@ -29,7 +29,9 @@ public class DataInitializer implements ApplicationRunner {
             "published", "Published"
     );
 
-    private static final List<String> LABEL_NAMES = List.of("bug", "feature");
+    private static final List<String> LABEL_NAMES = List.of(
+            "bug",
+            "feature");
 
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -63,11 +65,9 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void createTaskStatusesIfNotExists() {
-        TASK_STATUSES.forEach((slug, name) -> {
-            if (taskStatusRepository.findBySlug(slug).isEmpty()) {
-                taskStatusService.create(new TaskStatusCreateDTO(name, slug));
-            }
-        });
+        TASK_STATUSES.entrySet().stream()
+                .filter(entry -> taskStatusRepository.findBySlug(entry.getKey()).isEmpty())
+                .forEach(entry -> taskStatusService.create(new TaskStatusCreateDTO(entry.getValue(), entry.getKey())));
     }
 
     private void createLabelsIfNotExists() {

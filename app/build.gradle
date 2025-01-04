@@ -61,9 +61,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-devtools:$springBootVersion"
     implementation "org.springframework:spring-webmvc:6.2.1"
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0'
-    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.6.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.7.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-api:2.7.0'
 //    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
 //    implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
@@ -97,7 +97,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.16'
 
 //    testImplementation("org.assertj:assertj-core:3.26.3")
-//    testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
+    testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
 //    testImplementation 'org.mockito:mockito-core:5.14.2'
 
     testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"

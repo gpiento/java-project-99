@@ -14,11 +14,22 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
+
+    private static final Map<String, String> TASK_STATUSES = Map.of(
+            "draft", "Draft",
+            "to_review", "To Review",
+            "to_be_fixed", "To Be Fixed",
+            "to_publish", "To Publish",
+            "published", "Published"
+    );
+
+    private static final List<String> LABEL_NAMES = List.of("bug", "feature");
 
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -36,26 +47,32 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (!userRepository.existsByEmail("hexlet@example.com")) {
+
+        createUserIfNotExists();
+        createTaskStatusesIfNotExists();
+        createLabelsIfNotExists();
+    }
+
+    private void createUserIfNotExists() {
+        if (userRepository.findByEmail(defaultUserProperties.getEmail()).isEmpty()) {
             User user = new User();
-            user.setEmail("hexlet@example.com");
-            user.setPasswordDigest("qwerty");
+            user.setEmail(defaultUserProperties.getEmail());
+            user.setPasswordDigest(defaultUserProperties.getPassword());
             customUserDetailsService.createUser(user);
         }
+    }
 
-        Stream.of(
-                        new TaskStatusCreateDTO("Draft", "draft"),
-                        new TaskStatusCreateDTO("To Review", "to_review"),
-                        new TaskStatusCreateDTO("To Be Fixed", "to_be_fixed"),
-                        new TaskStatusCreateDTO("To Publish", "to_publish"),
-                        new TaskStatusCreateDTO("Published", "published")
-                )
-                .filter(taskStatus -> !taskStatusRepository.existsBySlug(taskStatus.getSlug()))
-                .forEach(taskStatusService::create);
+    private void createTaskStatusesIfNotExists() {
+        TASK_STATUSES.forEach((slug, name) -> {
+            if (taskStatusRepository.findBySlug(slug).isEmpty()) {
+                taskStatusService.create(new TaskStatusCreateDTO(name, slug));
+            }
+        });
+    }
 
-        Stream.of("bug", "feature")
-                .map(LabelCreateDTO::new)
-                .filter(label -> !labelRepository.existsByName(label.getName()))
-                .forEach(labelService::create);
+    private void createLabelsIfNotExists() {
+        LABEL_NAMES.stream()
+                .filter(name -> labelRepository.findByName(name).isEmpty())
+                .forEach(name -> labelService.create(new LabelCreateDTO(name)));
     }
 }

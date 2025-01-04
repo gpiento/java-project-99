@@ -123,8 +123,8 @@ tasks.named('test') {
 test {
     environment "SENTRY_DSN", ""
     finalizedBy jacocoTestReport // report is always generated after tests run
-    maxParallelForks = Runtime.runtime.availableProcessors()
-    forkEvery = 1
+//    maxParallelForks = Runtime.runtime.availableProcessors()
+//    forkEvery = 1
 
 //    testLogging {
 //        events "passed", "skipped", "failed"

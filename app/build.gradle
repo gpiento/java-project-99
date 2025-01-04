@@ -126,11 +126,11 @@ test {
     maxParallelForks = Runtime.runtime.availableProcessors()
     forkEvery = 1
 
-    testLogging {
-        events "passed", "skipped", "failed"
-        showStandardStreams = true
-        exceptionFormat = "full"
-    }
+//    testLogging {
+//        events "passed", "skipped", "failed"
+//        showStandardStreams = true
+//        exceptionFormat = "full"
+//    }
 }
 
 jacocoTestReport {

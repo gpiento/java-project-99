@@ -18,6 +18,16 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -29,7 +39,7 @@ jobs:
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           CODECLIMATE_REPO_TOKEN: ${{ secrets.CODECLIMATE_REPO_TOKEN }}
-        run: ./gradlew --no-daemon build
+        run: ./gradlew --no-daemon --parallel build
 
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v6.0.0

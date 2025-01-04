@@ -36,9 +36,9 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (!userRepository.existsByEmail("hexlet@hexlet.com")) {
+        if (!userRepository.existsByEmail("hexlet@example.com")) {
             User user = new User();
-            user.setEmail("hexlet@hexlet.com");
+            user.setEmail("hexlet@example.com");
             user.setPasswordDigest("qwerty");
             customUserDetailsService.createUser(user);
         }

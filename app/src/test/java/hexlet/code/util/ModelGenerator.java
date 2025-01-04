@@ -83,7 +83,7 @@ public class ModelGenerator {
                 .ignore(field(TaskStatus::getId))
                 .supply(field(TaskStatus::getName), () -> faker.word().adverb().toLowerCase())
                 .supply(field(TaskStatus::getSlug), () -> faker.lorem()
-                        .sentence(1)
+                        .sentence(2)
                         .toLowerCase()
                         .replace(" ", "_")
                         .replaceAll("[^a-z_\\s]", ""))

@@ -1,8 +1,8 @@
 package hexlet.code.component;
 
-import hexlet.code.dto.label.LabelCreateDTO;
-import hexlet.code.dto.taskstatus.TaskStatusCreateDTO;
 import hexlet.code.dto.user.UserCreateDTO;
+import hexlet.code.model.Label;
+import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.repository.UserRepository;
@@ -33,6 +33,8 @@ public class DataInitializer implements ApplicationRunner {
             "bug",
             "feature");
 
+    private static final String DEFAULT_USER = "hexlet@example.com";
+
     private final TaskStatusRepository taskStatusRepository;
 
     private final LabelRepository labelRepository;
@@ -43,7 +45,7 @@ public class DataInitializer implements ApplicationRunner {
 
     private final LabelService labelService;
 
-//    private final DefaultUserProperties defaultUserProperties;
+//    private final AdminDefaultProperties adminDefaultProperties;
 
     private final UserService userService;
 
@@ -57,23 +59,29 @@ public class DataInitializer implements ApplicationRunner {
 
     private void createUserIfNotExists() {
         // TODO try use DefaultUserProperties
-        if (userRepository.findByEmail("hexlet@example.com").isEmpty()) {
+        if (!userRepository.existsByEmail(DEFAULT_USER)) {
             UserCreateDTO userCreateDTO = new UserCreateDTO();
-            userCreateDTO.setEmail("hexlet@example.com");
+            userCreateDTO.setEmail(DEFAULT_USER);
             userCreateDTO.setPassword("qwerty");
+            userCreateDTO.setFirstName("Admin");
+            userCreateDTO.setLastName("Adminych");
             userService.create(userCreateDTO);
         }
     }
 
     private void createTaskStatusesIfNotExists() {
-        TASK_STATUSES.entrySet().stream()
-                .filter(entry -> taskStatusRepository.findBySlug(entry.getKey()).isEmpty())
-                .forEach(entry -> taskStatusService.create(new TaskStatusCreateDTO(entry.getValue(), entry.getKey())));
+        List<TaskStatus> taskStatusList = TASK_STATUSES.entrySet().stream()
+                .filter(entry -> !taskStatusRepository.existsBySlug(entry.getKey()))
+                .map(entry -> new TaskStatus(entry.getValue(), entry.getKey()))
+                .toList();
+        taskStatusRepository.saveAll(taskStatusList);
     }
 
     private void createLabelsIfNotExists() {
-        LABEL_NAMES.stream()
-                .filter(name -> labelRepository.findByName(name).isEmpty())
-                .forEach(name -> labelService.create(new LabelCreateDTO(name)));
+        List<Label> labelList = LABEL_NAMES.stream()
+                .filter(name -> !labelRepository.existsByName(name))
+                .map(Label::new)
+                .toList();
+        labelRepository.saveAll(labelList);
     }
 }

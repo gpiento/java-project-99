@@ -8,29 +8,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-import java.util.Optional;
-
-@Component
+@Component("userUtils")
 @AllArgsConstructor
 public class UserUtils {
 
     private UserRepository userRepository;
 
-    public User getCurrentUser() {
+    public boolean isCurrentUser(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new IllegalStateException("No authenticated user found");
+            return false;
         }
-        String email = authentication.getName();
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
-    }
-
-    public boolean isCurrentUser(Long id) {
-        User currentUser = getCurrentUser();
-        Optional<User> userOptional = userRepository.findById(id);
-        return userOptional.isPresent()
-                && Objects.equals(userOptional.get().getEmail(), currentUser.getEmail());
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        String currentUser = authentication.getName();
+        return currentUser.equals(user.getEmail());
     }
 }

@@ -30,82 +30,70 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    springVersion = '6.2.1'
-    springBootVersion = '3.4.1'
-    springDataJpaVersion = '3.4.1'
-    springSecurityTestVersion = '6.4.2'
-    hibernateCoreVersion = '6.6.3.Final'
-    mapStructVersion = '1.6.3'
-    jacksonDatabindNullableVersion = '0.2.6'
-    h2Version = '2.3.232'
-    postgresqlVersion = '42.7.4'
-    lombokVersion = '1.18.36'
-    lombokMapstructBindingVersion = '0.2.0'
-    datafakerVersion = '2.4.2'
-    instancioVersion = '5.2.1'
-    sentryVersion = '7.20.0'
-    jsonUnitVersion = '4.1.0'
-    junitVersion = '5.11.3'
-    junitPlatformVersion = '1.11.1'
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.1")
+    }
+    dependencies {
+        dependency 'net.datafaker:datafaker:2.3.0'
+        dependency 'org.instancio:instancio-junit:5.0.1'
+        dependency 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+//        dependency 'org.springdoc:springdoc-openapi-webflux-ui:1.8.0'
+        dependency "org.mapstruct:mapstruct:1.5.5.Final"
+        dependency "org.mapstruct:mapstruct-processor:1.5.5.Final"
+        dependency "org.openapitools:jackson-databind-nullable:0.2.6"
+        dependency "net.javacrumbs.json-unit:json-unit-assertj:3.2.7"
+        dependency "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+    }
 }
 
 dependencies {
-    implementation "org.springframework:spring-core:$springVersion"
-    implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-starter-validation:$springBootVersion"
-//    implementation "org.springframework.data:spring-data-jpa:$springDataJpaVersion"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server:$springBootVersion"
-    implementation "org.springframework.boot:spring-boot-devtools:$springBootVersion"
-//    implementation "org.springframework:spring-webmvc:6.2.1"
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation "org.springframework.boot:spring-boot-devtools"
 
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
-//    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.0'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.8.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//    implementation 'org.springdoc:springdoc-openapi-webflux-ui'
 
-//    implementation "org.hibernate:hibernate-core:$hibernateCoreVersion"
+    compileOnly "org.projectlombok:lombok"
+    annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding")
+    testCompileOnly "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
 
-    compileOnly "org.projectlombok:lombok:$lombokVersion"
-    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    implementation "org.mapstruct:mapstruct"
+    annotationProcessor "org.mapstruct:mapstruct-processor"
 
-    implementation "org.mapstruct:mapstruct:$mapStructVersion"
-    annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
+    implementation "org.openapitools:jackson-databind-nullable"
 
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2'
+    runtimeOnly "com.h2database:h2"
+    runtimeOnly "org.postgresql:postgresql"
 
-    implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindNullableVersion"
-
-    runtimeOnly "com.h2database:h2:$h2Version"
-    runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
-
-    implementation "net.datafaker:datafaker:$datafakerVersion"
-    implementation "org.instancio:instancio-junit:$instancioVersion"
+    implementation "net.datafaker:datafaker"
+    testImplementation "org.instancio:instancio-junit"
 
 //    implementation "io.sentry:sentry-spring-boot-starter:$sentryVersion"
 //    implementation "io.sentry:sentry-spring-boot-starter-jakarta:$sentryVersion"
 //    implementation platform("io.sentry:sentry-bom:$sentryVersion") //import bom
 //    implementation('io.sentry:sentry') //no version specified
 //    implementation('io.sentry:sentry-logback') //no version specified
-    implementation 'org.slf4j:slf4j-api:2.0.16'
+    implementation 'org.slf4j:slf4j-api:2.0.12'
 
 //    testImplementation("org.assertj:assertj-core:3.26.3")
-    testImplementation "net.javacrumbs.json-unit:json-unit-assertj:$jsonUnitVersion"
+    testImplementation "net.javacrumbs.json-unit:json-unit-assertj"
 //    testImplementation 'org.mockito:mockito-core:5.14.2'
 
-    testImplementation "org.springframework.security:spring-security-test:$springSecurityTestVersion"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+    testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 
 //    testImplementation platform("org.junit:junit-bom:$junitVersion")
-//    testImplementation "org.junit.jupiter:junit-jupiter"
-//    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 
 //    implementation 'org.slf4j:slf4j-api:1.7.32'
 }
@@ -138,10 +126,6 @@ jacocoTestReport {
     reports {
         xml.required = true
     }
-//    additionalSourceDirs.setFrom files("build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
-//    sourceDirectories.setFrom files("src/main/java")
-//    classDirectories.setFrom files("build/classes/java/main")
-//    additionalSourceDirs.setFrom files("app/build/generated/sources/annotationProcessor/java/main/hexlet/code/mapper")
 }
 
 testlogger {

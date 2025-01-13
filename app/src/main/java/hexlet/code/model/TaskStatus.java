@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,6 +27,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public class TaskStatus implements BaseEntity {
 
     @Id
@@ -45,6 +47,11 @@ public class TaskStatus implements BaseEntity {
     @CreatedDate
     @CreationTimestamp
     private LocalDate createdAt;
+
+    public TaskStatus(String name, String slug) {
+        this.name = name;
+        this.slug = slug;
+    }
 
     @Override
     public final boolean equals(Object o) {

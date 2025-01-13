@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "admin")
 @Setter
 @Getter
-public class DefaultUserProperties {
+public class AdminDefaultProperties {
 
     @Email
     private String email;

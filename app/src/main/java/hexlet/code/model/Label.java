@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
@@ -24,6 +25,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public class Label implements BaseEntity {
 
     @Id
@@ -36,6 +38,10 @@ public class Label implements BaseEntity {
 
     @CreatedDate
     private LocalDate createdAt;
+
+    public Label(String name) {
+        this.name = name;
+    }
 
     @Override
     public final boolean equals(Object o) {
